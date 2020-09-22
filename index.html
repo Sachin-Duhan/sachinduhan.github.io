@@ -1,119 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Youtube tags generator</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="This tool extract youtube video tags for free. 
-See the tags of your competitors with youtube tags extractor and get views.">
+<html lang="en"> 
+<head> 
+	<title>Document</title> 
 
-<link
-rel="stylesheet"
-href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-/>
-<link rel="preload"  type="text/css" href="yttags.css" as="style" onload="this.rel='stylesheet'">
+	<!-- link the CSS file here -->
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Description">
+    <!-- link the CSS file here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="preload" as="style" >
+ 
+   
+</head> 
+<body> 
 
-
-</head>
-<body>
-
-
-<div class="main">
-<h1 class="text-center">YouTube Tag Generator</h1>
-<br /><br />
-<form id="myForm" class="mx-auto">
-    <label for="url" class="text-center">.</label>
-    <div class="form-group">
-        <input
-        class="form-control"
-        type="url"
-        name="url"
-        id="url"
-        required
-        placeholder="Paste URL here... Example- https://www.youtube.com/watch?v=Ydp5fLbxUbk"
-        />
-</div>
-<div class="form-group text-center">
-<button class="btn " id="btnmain" onclick="window.scroll='#result'">
-Extract Tags
-</button>
-</div>
-
-</form>
-</div>
-
-<div class="container">
-
-<div id="result">
-</div>
-
-<div class="col-md-8 mt-5 pt-3" id="leftDiv0"> 
-
-<h2>
-Why use tag generator?
-</h2>
-<p >This<strong> youtube tag genrator </strong>tool helps to you to find all the tags of a specific YouTube video.  If you are a Youtuber, you should definitely use our tool to rank your video on Youtube. </p>
-<p>You can rank your video on YouTube by using our tag extractor tool. Tags are important in SEO(Search engine optimization).  </p>
-<p>You can<strong> get youtube tags</strong> of your competitors and use their tags to rank your video faster and get more views on youtube.</p>
-</div>
-
-
-<div class="col-md-8 rightDiv">
-<h2>
-How to use it?
-</h2>
-<p>Go to the <a href="https://youtube.com " target="_blank"  rel="noreferrer"  class="link__content">YouTube </a>and copy the link of the video that you wanna extract tags from. Afterwards, just paste the link above and click on the find tags button and you are done.</p>
-<p>You will see the thumbnail of the video along with the title of the video and tags. Click on the copy button to copy all the tags.</p>
-</div>
-<div class="col-md-8 " id="leftDiv1">
-<h2>Why tags are important?</h2>
-<p>Tags are important for YouTube to understand your video. Tags helps YouTube to understand in which category your video falls in. It will enhance the reach of your video.</p>
-</div>
-<div class="col-md-10 my-5 pt-3">
-    <h2>
-        Extract popular video tags
-    </h2>
-    <p>
-        This tool will extract tags from any youtube video that you want. You can see the tags of popular videos and take a idea from them and use them in your youtube video.
-    </p>
-    <p>
-        So go ahead use this tool, rank your video on Youtube and most important share this tool with your friends so that they can also take benefit of this tool.
-    </p>
-</div>
-
-<div class="col-md-12mt-5 pt-3">
-
-<h2 class="text-center">
-Tags Best Practices
-</h2>
-<p class="text-dark">Before using YouTube tags you should know some best practises:</p>
-<h3 class="my-4">1. Always use video related tags</h3>
-<p class="text-dark" >Never use the tag which is not related to your video. For example if your video is about app development than you should use tags like app development, android development etc. Not like unboxing. This will not help you to rank your video.</p>
-<p class="text-dark" >If by chance your video ranked on YouTube for some keyword than users will not click on your video.</p>
-</div>
-
-<div class="col-md-12mt-5 pt-3">
-<h3 class="my-4">2. Use target keyword first</h3>
-<p class="text-dark" >Always use the target keyword first. That simply means write the tag first for which your video is mostly related and you wanna rank for. It will definitely boost your video ranking on YouTube. </p>
-<p class="text-dark" >Then use some less related keywords afterwards.</p>
-</div>
-
-
-</div>
-
-
-
-
-<!-- Footer starts here -->
-
-<footer class="site-footer">
-<p class="text-center" >Made By <b>Sachin Duhan</b></p>
-
-</footer>
-
-
-</body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-<script type="text/javascript" src="yttags.js" async></script>
-</html>
+    
+            <h1 class='text-center mt-5 pt-5'>
+              <span id="typed"></span>
+            </h1>
+      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.9/typed.min.js" async defer></script>
+<script>
+     window.onload = function () {
+        var typed = new Typed('#typed', {
+            strings: ["Welocome to the website"],
+            backSpeed: 50,
+            smartBackspace: true,
+            backDelay: 1200,
+            startDelay: 1000,
+            typeSpeed: 50,
+            loop: true,
+        });
+    };
+</script>
+</body> 
+</html> 
