@@ -1,38 +1,636 @@
 <!DOCTYPE html>
-<html lang="en"> 
-<head> 
-	<title>Document</title> 
+<html lang="en">
 
-	<!-- link the CSS file here -->
-	<meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Description">
+<head>
+    <title>Simple Speed Typer</title>
+
     <!-- link the CSS file here -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap" rel="preload" as="style" >
- 
-   
-</head> 
-<body> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="This is the description">
+    <!-- link the CSS file here -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet">
 
-    
-            <h1 class='text-center mt-5 pt-5'>
-              <span id="typed"></span>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <style>
+        body {
+            background-color: #fafbfd;
+            
+        }
+
+        .container-fluid {
+            margin-top: 4rem;
+
+        }
+        .blog-post-title {
+    font: 400 1.1rem / 1.32222 'DM Sans', sans-serif;
+
+}
+
+
+.blogContainer{
+    background:url('blob.svg')!important;
+    background-repeat: no-repeat!important;
+    background-position:center!important;
+    background-size:25rem!important;
+}
+
+        h1 {
+            font: 400 34.5px / 1.32222 Segoe UI, system-ui, -apple-system, sans-serif;
+            margin-top: 64px !important;
+            margin-bottom: 32px !important;
+            color: #202124;
+            margin: 0;
+            overflow: visible;
+            transform: translateX(12px);
+        }
+
+        .btn-grp {
+            transform: translateX(8px);
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 2rem;
+            line-height: 1.9rem;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font: 500 0.875rem/1.9rem Segoe UI, system-ui, -apple-system, sans-serif!important;
+        }
+
+        .btn:hover {
+            box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.20);
+            transition: background-color .2s, box-shadow .2s;
+        }
+
+        .btn:focus {
+            box-shadow: 0 -2px 0 #fff;
+        }
+
+        #test:hover {
+            background-color: #404aff;
+        }
+
+        #test {
+            background-color: #3740ff;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        #learn {
+            letter-spacing: 1px;
+            font-weight: 500;
+            border: 1px solid #dadce0;
+        }
+
+        @media(max-width: 600px) {
+            .btn {
+                width: 90%;
+                margin-bottom: 1.2rem;
+            }
+
+            #learn {
+                transform: translateX(-10px);
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+        }
+
+        @media(max-width: 769px) {
+            p.col-md-5 {
+                min-width: 45vw !important;
+            }
+        }
+
+        @media(max-width: 1100px) {
+            p.col-md-5 {
+                min-width: 40vw !important;
+            }
+        }
+        .shadow-dark-lg {
+    box-shadow: 0 1.5rem 4rem rgba(22,28,45,.15)!important;
+}
+     
+
+        li a {
+            color: #404041 !important;
+            font-weight: 500;
+            font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+            padding: 15px 1.6rem !important;
+            font-size: 15px;
+
+        }
+
+        li a:hover {
+            color: #404041;
+            background-color: #f2f2f2;
+        }
+
+        ul {
+            margin-left: 6rem;
+        }
+
+        .active {
+            box-shadow: 0 -2px 0 #f4f4ff inset;
+        }
+
+        li.active:hover {
+            box-shadow: 0 -2px 0 #3740ff inset !important;
+            background-color: #fff !important;
+        }
+
+        .logo {
+            margin-left: 1rem;
+        }
+
+
+        #typed {
+            font-size: 2rem;
+        }
+
+        .typed-cursor {
+            color: #28a745;
+        }
+
+        .btn-signup {
+            padding: 0px 10px !important;
+            transform: translateY(10px);
+            background-color: #404aff !important;
+            color: #fff !important;
+
+        }
+
+        .btn-signup:hover {
+            box-shadow: 0 4px 5px 0 #fff, 0 1px 10px 0 #fff, 0 2px 4px -1px #fff !important;
+            transition: none !important;
+
+        }
+
+        .login {
+            color: #3740ff !important;
+            margin-left: 1rem;
+        }
+
+        .login:hover {
+            background-color: #fafbfd !important;
+        }
+
+        #typed {
+            color: #0d946c !important;
+        }
+
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #161c2d !important;
+        }
+
+        @media(max-width:780px) {
+            .login {
+                transform: translateX(-1rem);
+            }
+        }
+
+        #features {
+            background-color: #fff !important;
+            border-radius: 0.75rem;
+            margin-bottom: 10em;
+            margin-top: 8rem;
+            border-bottom: 1px solid rgba(143, 143, 143, 0.125);
+            height: auto;
+        }
+        .text-dark {
+    color: #2b354f!important;
+}
+        .card {
+            border: 0 !important;
+            border-radius: 0.35rem!important;
+        }
+
+
+        .card-title,
+        .card-text {
+            text-align: center;
+        }
+        .card-body{
+            padding-bottom: 2rem;
+        }
+
+        .card-title {
+            color: #343A39 !important;
+            font-weight: 400;
+            font-size: 22px;
+            margin-bottom:1.34rem;
+
+        }
+
+        p {
+            color: #4a5a71;
+            font-family: 'DM Sans', sans-serif;
+
+        }
+
+        .badge-rounded-circle {
+            height: calc(1em + .5rem);
+
+            padding: 0 0.25rem 0.25rem 0.25rem 0.25rem;
+            border-radius: 50%;
+        }
+
+        .fa-check {
+            transform: translateY(2px);
+        }
+
+        .typer {
+            color: #0d946c;
+            font-size: 1.7rem;
+            font-weight: 400;
+        }
+        .btn-test{
+            background-color: #3740ff;
+            border:0px solid #3740ff;
+            color: white;
+        }
+        .btn-test:hover{
+            background-color: #404aff;
+            border:0px solid #3740ff;
+            color: white;
+
+        }
+        .card-img-top {
+    min-height: 200px;
+    max-height: 250px;
+    width: auto;
+}
+.fa-search{
+    color: #5c37ff;
+    font-size: 1.6rem!important;
+    margin-right: 1rem;
+
+}
+.fa-shield{
+    color: rgb(2, 160, 2);
+    font-size: 1.6rem!important;
+    margin-right: 1rem;
+
+}
+.fa-bolt{
+    color: rgb(0, 229, 255);
+    font-size: 1.6rem!important;
+    margin-right: 1rem;
+
+}
+
+.shadow-light-lg {
+    box-shadow: 0 1.5rem 4rem rgba(22,28,45,.05)!important;
+}
+.blogCard:hover{
+transform:translateY(-5px);
+transition: box-shadow .35s ease,transform .45s ease;
+
+
+}
+.blogContainer{
+    margin-top: 4rem;
+}
+    </style>
+</head>
+
+<body oncopy="return false" onpaste="return false" oncut="return false">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a href="/"><img src="https://webdev.imgix.net/images/lockup.svg" alt="Logo" style="height:30px; width:130px;"
+                class="logo"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item ">
+                    <a class="nav-link active" href="/test">Test <span class="sr-only">(current)</span></a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/learn">Learn</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/blog">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link login" href="/login">Login</a>
+                </li>
+
+                <li class="nav-item">
+                    <button class="btn btn-signup" onclick="window.location='/signup'">Signup</button>
+                </li>
+        </div>
+    </nav>
+    <div class="main">
+        <div class="col-md-9 container-fluid">
+            <h1>
+                Take a typing test and improve your <br> <span id="typed"></span>
             </h1>
-      
+            <p class="col-md-5">
+                Get the guidance about typing from us. Analyse the results and practise to improve the typing speed.
+            </p>
+            <div class="btn-grp">
+                 <button class="btn mx-2" id="test" data-toggle="modal" data-target="#checkDifficulty">TAKE TEST</button>
+
+                <button class="btn mx-3" id="learn">LEARN TYPING</button>
+            </div>
+        </div>
+
+        <section id="features">
+            <div class="container-fluid">
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"><i class="fa fa-search"></i> Technology</p>
+                            <p class="card-text">With contextual analysis, word placement, and our smart algorithms,
+                                checking your writing has never been easier</p>
+                        </div>
+
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"> <i class="fa fa-bolt"></i> Lightspeed recognition
+                            </p>
+                            <p class="card-text">Our software pairs speed with the accuracy of DeepSearch™ technology
+
+                            </p>
+                        </div>
+
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"> <i class="fa fa-shield"></i> Privacy comes standard</p>
+                            <p class="card-text">We back industry-leading technology with a three-part pledge, Our
+                                Commitment to you</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container mb-5 pb-5">
+            <div class="row justify-content-between align-top mb-8 mb-md-9">
+                <div class="col-12 col-md-6 order-md-2 aos-init aos-animate" data-aos="fade-left">
+
+                    <h2 class="text-center text-md-left">
+                        <div class="font-weight-light text-dark">
+                            The #1 Typing Test Tool <br>
+                            <span class="typer"> for <span id="typed2"></span></span>
+                        </div>
+                        </span>
+                    </h2>
+
+                    <p class="font-size-md text-gray-700 mb-md-6 mt-sm-4 mt-0 text-center text-md-left">
+                        We've helped more than <b>5 million</b> students, teachers, and professionals identify potential
+                        plagiarism in their work.
+                    </p>
+
+                    <div class="row small">
+                        <div class="col-12 col-lg-6">
+
+                            <div class="d-flex">
+
+                                <div class="badge badge-rounded-circle badge-info mt-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </div>
+
+                                <p class="text-gray-700">
+                                    Webpages
+                                </p>
+                            </div>
+
+                            <div class="d-flex">
+
+                                <div class="badge badge-rounded-circle badge-info mt-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </div>
+                                <p class="text-gray-700">
+                                    Academic sources
+                                </p>
+                            </div>
+
+                            <div class="d-flex">
+
+                                <div class="badge badge-rounded-circle badge-info mt-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </div>
+                                <p class="text-gray-700">
+                                    Citation generator
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 mb-6 mb-md-0">
+
+                            <div class="d-flex">
+
+                                <span class="badge badge-rounded-circle badge-info mt-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </span>
+
+                                <p class="text-gray-700">
+                                    News sources
+                                </p>
+                            </div>
+
+                            <div class="d-flex">
+
+                                <div class="badge badge-rounded-circle badge-info mr-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </div>
+
+                                <p class="text-gray-700">
+                                    Online textbooks
+                                </p>
+                            </div>
+
+                            <div class="d-flex">
+
+                                <div class="badge badge-rounded-circle badge-info mr-1 mr-4">
+                                    <i class="fa fa-check"></i>
+                                </div>
+
+                                <p class="text-gray-700">
+                                    DeepSearch™
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-5 order-md-1 aos-init aos-animate" data-aos="fade-right">
+
+                    <div class="card shadow-dark-lg">
+
+                        <img src="https://www.techadvisor.co.uk/cmsdata/features/3676385/xiaomi_notebook_pro_review03_thumb1200_4-3.jpg" alt="test"
+                            class="card-img-top">
+
+                            
+                        <div class="card-body bg-light-gray">
+
+                            <div class="text-center row justify-content-center">
+                                <button type="button" class="btn btn-test shadow mt-1  " data-toggle="modal" data-target="#checkDifficulty">
+                                   TAKE TEST NOW
+                                    <i class="fa fa-arrow-right mt-2 pl-2" style="width: 2vw !important;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container blogContainer">
+<h3 class="text-center mb-3">LATEST BLOG POSTS</h3>
+<p class="text-center" id="blog" style="font-size:20px ;">Check out our latest blog posts!</p>
+
+        <div class="row pl-sm-4 pr-sm-4 blogPosts">
+            <div class="col-12 col-lg-4 mt-sm-3 blogCard" >
+            
+            <a href="https://www.quetext.com/blog/developing-effective-online-writing-curriculum" target="_blank" rel="noopener" class="card-link blog-post-url">
+            <div class="card shadow-light-lg mb-6 mb-md-0 lift lift-lg">
+            
+            <img src="https://blog.quetext.com/wp-content/uploads/2020/08/linkedin-sales-navigator-EI50ZDA-l8Y-unsplash-e1599695302633.jpg" alt="Blog Post" class="card-img-top blog-post-img">
+            
+           
+            
+            <div class="card-body position-relative">
+            
+         
+            <h3 class="text-dark blog-post-title text-center font-weight-bold">Developing an Effective Online Writing Curriculum</h3>
+            <div class="h5 text-center">
+            <small class="blog-post-date"><i class="fa fa-clock text-dark"></i>August, 26</small>
+            </div>
+            </div>
+            </div>
+            </a>
+            </div>
+            <div class="col-12 col-lg-4 mt-sm-3 blogCard">
+            
+            <a href="https://www.quetext.com/blog/developing-ideal-online-learning-environment" target="_blank" rel="noopener" class="card-link blog-post-url">
+            <div class="card shadow-light-lg mb-6 mb-md-0 lift lift-lg">
+            
+            <img src="https://blog.quetext.com/wp-content/uploads/2020/07/jeshoots-com-2vD8lIhdnw-unsplash-e1599695342285.jpg" alt="" class="card-img-top blog-post-img">
+            
+          
+            
+            <div class="card-body position-relative">
+          
+            <h3 class="text-dark blog-post-title text-center font-weight-bold">Developing an Ideal Online Learning Environment</h3>
+            <div class="h5 text-center">
+            <small class="blog-post-date"><i class="fa fa-clock text-dark"></i>July, 20</small>
+            </div>
+            </div>
+            </div>
+            </a>
+            </div>
+            <div class="col-12 col-lg-4 mt-sm-3 blogCard">
+            
+            <a href="https://www.quetext.com/blog/avoiding-plagiarism-online-learning" target="_blank" rel="noopener" class="card-link blog-post-url">
+            <div class="card shadow-light-lg lift lift-lg">
+            
+            <img src="https://blog.quetext.com/wp-content/uploads/2020/06/online-learning-environment-e1599677862658.jpg" alt="" class="card-img-top blog-post-img">
+           
+            
+            <div class="card-body position-relative">
+            <h3 class="text-dark blog-post-title text-center font-weight-bold">Avoiding Plagiarism in Online Learning</h3>
+            <div class="h5 text-center">
+            <small class="blog-post-date"><i class="fa fa-clock text-dark"></i>June, 4</small>
+            </div>
+            </div>
+            </div>
+            </a>
+            </div>
+            </div>
+        </div>
+    </div>
+  <!-- Modal -->
+  <div class="modal fade" id="checkDifficulty" tabindex="-1" role="dialog" aria-labelledby="Title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="longTitle">Good Luck for the test!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center" style="font-size: 23px;">Choose the format of the test.</p>
+<div class="text-center">
+            <button type="button" class="btn btn-primary">Wihout Time Limit</button>    
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checkTime">With Time Limit</button>    
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="checkTime" tabindex="-1" role="dialog" aria-labelledby="Title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="longTitle">Good Luck for the test!</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center" style="font-size: 23px;">Choose the time for the test.</p>
+<div class="text-center">
+            <button type="button" class="btn btn-primary" onclick="window.location='/index.html'">1 Minute</button>    
+            <button type="button" class="btn btn-primary">3 Minutes</button>    
+            <button type="button" class="btn btn-primary">5 Minutes</button>    
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.9/typed.min.js" async defer></script>
-<script>
-     window.onload = function () {
-        var typed = new Typed('#typed', {
-            strings: ["Welocome to the website"],
-            backSpeed: 50,
-            smartBackspace: true,
-            backDelay: 1200,
-            startDelay: 1000,
-            typeSpeed: 50,
-            loop: true,
-        });
-    };
-</script>
-</body> 
-</html> 
+    <script>
+  
+        window.onload = function () {
+            var typed = new Typed('#typed', {
+                strings: ["speed", "accuracy", "concentration"],
+                backSpeed: 40,
+                smartBackspace: true,
+                backDelay: 1200,
+                startDelay: 100,
+                typeSpeed: 30,
+                loop: true,
+            });
+
+            var typed = new Typed('#typed2', {
+                strings: ["students", "professionals", "coders", "teachers", "writers", "bloggers"],
+                backSpeed: 40,
+                smartBackspace: true,
+                backDelay: 1200,
+                startDelay: 100,
+                typeSpeed: 30,
+                loop: true,
+            });
+
+
+        };
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" async defer></script>
+
+</body>
+
+</html>
