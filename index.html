@@ -8,10 +8,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-    <meta name="description" content="This is the description">
+    <meta property="og:title" content="Testing sharing on facebook">
+<meta property="og:site_name" content="Test123">
+<meta property="og:url" content="https://sachin-duhan.github.io/sachinduhan.github.io/">
+<meta property="og:description" content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://scotch-res.cloudinary.com/image/upload/w_1500,q_auto:good,f_auto/media/1/9QmXcQ6KQTio9aAHVo7S_build-your-first-python-and-django-application.png">
+    <meta name="description" content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard ">
     </head>
     <body>
         <h2>Hello world</h2>
+             <a id="shareFB">FB Share</a>
+
+        
+        <script>
+             function sethref() 
+ {
+  document.getElementById("shareFB").setAttribute("href","https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(document.URL));
+ }
+ 
+window.onload = sethref;
+ </script>
+        
+        </script>
 </body>
 
 </html>
