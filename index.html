@@ -1,1100 +1,596 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-         
-    </title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+  <title>Techniques to make a web app load fast even on a phone</title>
 
-    <link rel="stylesheet" href="/static/css/base.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <meta name="description" content="&lt;p&gt;At Google I/O 2019 Mariko, Jake, and I shipped&amp;nbsp;PROXX a modern Minesweeper-clone for the web. Something that sets PROXX apart is the focus on accessibility (you can play it with a screenreader!)&lt;/p&gt;">
+  <link rel="canonical" href="http://127.0.0.1:8000/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+
+
+  
+<script type="application/ld+json">{"@type": "BlogPosting", "headline": "Techniques to make a web app load fast even on a phone", "description": "\u003Cp\u003EAt Google I/O 2019 Mariko, Jake, and I shipped\u0026nbsp;PROXX a modern Minesweeper-clone for the web. Something that sets PROXX apart is the focus on accessibility (you can play it with a screenreader!)\u003C/p\u003E", "author": {"@type": "Person", "name": "Sachin"}, "datePublished": "2020-11-05", "dateModified": "2020-11-05", "url": "https://localhost:8000/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://localhost:8000/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone"}, "image": "https://localhost:8000/media/images/hero_mRQ8fUI.jpg", "@context": "https://schema.org"}</script>
+
+<meta property="og:description" content="&lt;p&gt;At Google I/O 2019 Mariko, Jake, and I shipped&amp;nbsp;PROXX a modern Minesweeper-clone for the web. Something that sets PROXX apart is the focus on accessibility (you can play it with a screenreader!)&lt;/p&gt;" />
+<meta property="og:image" content="https://localhost:8000/media/images/hero_mRQ8fUI.jpg" />
+<meta property="og:url" content="https://localhost:8000/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Techniques to make a web app load fast even on a phone" />
+<meta property="article:published_time" content="2020-11-05" />
+<meta property="article:modified_time" content="2020-11-05" />
+
+  
+  
+  
+  <style>
     
-<style>
-html{overflow-x:hidden}body{line-height:1.7;color:rgb(68, 66, 66);font-weight:300;font-size:.9rem}::-moz-selection{background:#000;color:#fff}::selection{background:#000;color:#fff}a{-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}a:hover{text-decoration:none}body{font-family:"Cabin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}.border-2{border-width:2px}.text-black{color:#000!important}.bg-black{background:#000!important}.color-black-opacity-5{color:rgba(0,0,0,0.5)}.color-white-opacity-5{color:rgba(255,255,255,0.5)}.site-wrap:before{display:none;-webkit-transition:.3s all ease-in-out;-o-transition:.3s all ease-in-out;transition:.3s all ease-in-out;background:rgba(0,0,0,0.6);content:"";position:absolute;z-index:2000;top:0;left:0;right:0;bottom:0;opacity:0;visibility:hidden}.offcanvas-menu .site-wrap{height:100%;width:100%;z-index:2}.offcanvas-menu .site-wrap:before{opacity:1;visibility:visible}.line-height-1{line-height:1!important}.bg-black{background:#000}.site-section{padding:2.5em 0}@media (min-width: 768px){.site-section{padding:7em 0}}.site-section.site-section-sm{padding:4em 0}.site-section-heading{padding-bottom:20px;margin-bottom:0;position:relative;font-size:2.5rem}@media (min-width: 768px){.site-section-heading{font-size:3rem}}.border-top{border-top:1px solid #edf0f5!important}.bg-text-line{display:inline;background:#000;-webkit-box-shadow:20px 0 0 #000,-20px 0 0 #000;box-shadow:20px 0 0 #000,-20px 0 0 #000}.text-white-opacity-05{color:rgba(255,255,255,0.5)}.text-black-opacity-05{color:rgba(0,0,0,0.5)}.hover-bg-enlarge{overflow:hidden;position:relative}@media (max-width: 991.98px){.hover-bg-enlarge{height:auto!important}}.hover-bg-enlarge > div{-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);-webkit-transition:.8s all ease-in-out;-o-transition:.8s all ease-in-out;transition:.8s all ease-in-out}.hover-bg-enlarge:hover > div,.hover-bg-enlarge:focus > div,.hover-bg-enlarge:active > div{-webkit-transform:scale(1.2);-ms-transform:scale(1.2);transform:scale(1.2)}@media (max-width: 991.98px){.hover-bg-enlarge .bg-image-md-height{height:300px!important}}.bg-image{background-size:cover;background-position:center center;background-repeat:no-repeat;background-attachment:fixed}.bg-image.overlay{position:relative}.bg-image.overlay:after{position:absolute;content:"";top:0;left:0;right:0;bottom:0;z-index:0;width:100%;background:rgba(0,0,0,0.7)}.bg-image > .container{position:relative;z-index:1}@media (max-width: 991.98px){.img-md-fluid{max-width:100%}}@media (max-width: 991.98px){.display-1,.display-3{font-size:3rem}}.play-single-big{width:90px;height:90px;display:inline-block;border:2px solid #fff;color:#fff!important;border-radius:50%;position:relative;-webkit-transition:.3s all ease-in-out;-o-transition:.3s all ease-in-out;transition:.3s all ease-in-out}.play-single-big > span{font-size:50px;position:absolute;top:50%;left:50%;-webkit-transform:translate(-40%,-50%);-ms-transform:translate(-40%,-50%);transform:translate(-40%,-50%)}.play-single-big:hover{width:120px;height:120px}.overlap-to-top{margin-top:-150px}.ul-check{margin-bottom:50px}.ul-check li{position:relative;padding-left:35px;margin-bottom:15px;line-height:1.5}.ul-check li:before{left:0;font-size:20px;top:-.3rem;font-family:"icomoon";content:"\e5ca";position:absolute}.ul-check.white li:before{color:#fff}.ul-check.success li:before{color:#8bc34a}.ul-check.primary li:before{color:#8bc34a}.select-wrap,.wrap-icon{position:relative}.select-wrap .icon,.wrap-icon .icon{position:absolute;right:10px;top:50%;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);font-size:22px}.select-wrap select,.wrap-icon select{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:100%}.site-logo{font-size:2rem;color:#000}.site-navbar{margin-bottom:0;z-index:1999;width:100%;background:#fff;font-family:"B612 Mono",monospace}.site-navbar .site-navigation.border-bottom{border-bottom:1px solid #f3f3f4!important}.site-navbar .site-navigation .site-menu{margin-left:0;padding-left:0;margin-bottom:0}.site-navbar .site-navigation .site-menu .active > a{color:#000;display:inline-block;padding-left:10px;padding-right:10px}.site-navbar .site-navigation .site-menu a{text-decoration:none!important;display:inline-block}.site-navbar .site-navigation .site-menu > li{display:inline-block}.site-navbar .site-navigation .site-menu > li:first-child > a{padding-left:0}.site-navbar .site-navigation .site-menu > li > a{text-transform:uppercase;font-size:.8rem;letter-spacing:.05rem;font-weight:400;display:inline-block;text-decoration:none!important;color:#000}.site-navbar .site-navigation .site-menu > li > a:hover{color:#000}.site-navbar .site-navigation .site-menu .has-children{position:relative}.site-navbar .site-navigation .site-menu .has-children > a{position:relative;padding-right:20px}.site-navbar .site-navigation .site-menu .has-children > a:before{position:absolute;content:"\e313";font-size:16px;top:50%;right:0;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);font-family:'icomoon'}.site-navbar .site-navigation .site-menu .has-children .dropdown{visibility:hidden;opacity:0;top:100%;position:absolute;text-align:left;border-top:2px solid #000;-webkit-box-shadow:0 2px 10px -2px rgba(0,0,0,0.1);box-shadow:0 2px 10px -2px rgba(0,0,0,0.1);border-left:1px solid #edf0f5;border-right:1px solid #edf0f5;border-bottom:1px solid #edf0f5;padding:0;margin-top:20px;margin-left:0;background:#fff;-webkit-transition:.2s 0;-o-transition:.2s 0;transition:.2s 0}.site-navbar .site-navigation .site-menu .has-children .dropdown.arrow-top{position:absolute}.site-navbar .site-navigation .site-menu .has-children .dropdown.arrow-top:before{bottom:100%;left:20%;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none;border-color:rgba(136,183,213,0);border-bottom-color:#fff;border-width:10px;margin-left:-10px}.site-navbar .site-navigation .site-menu .has-children .dropdown a{font-size:16px;text-transform:none;letter-spacing:normal;-webkit-transition:0 all;-o-transition:0 all;transition:0 all;color:#343a40}.site-navbar .site-navigation .site-menu .has-children .dropdown .active > a{color:#8bc34a!important}.site-navbar .site-navigation .site-menu .has-children .dropdown > li{list-style:none;padding:0;margin:0;min-width:200px}.site-navbar .site-navigation .site-menu .has-children .dropdown > li > a{padding:9px 20px;display:block}.site-navbar .site-navigation .site-menu .has-children .dropdown > li > a:hover{background:#f4f5f9;color:#25262a}.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > a:before{content:"\e315";right:20px}.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > .dropdown,.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children > ul{left:100%;top:0}.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:hover > a,.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:active > a,.site-navbar .site-navigation .site-menu .has-children .dropdown > li.has-children:focus > a{background:#f4f5f9;color:#25262a}.site-navbar .site-navigation .site-menu .has-children:hover > a,.site-navbar .site-navigation .site-menu .has-children:focus > a,.site-navbar .site-navigation .site-menu .has-children:active > a{color:#000}.site-navbar .site-navigation .site-menu .has-children:hover,.site-navbar .site-navigation .site-menu .has-children:focus,.site-navbar .site-navigation .site-menu .has-children:active{cursor:pointer}.site-navbar .site-navigation .site-menu .has-children:hover > .dropdown,.site-navbar .site-navigation .site-menu .has-children:focus > .dropdown,.site-navbar .site-navigation .site-menu .has-children:active > .dropdown{-webkit-transition-delay:0;-o-transition-delay:0;transition-delay:0;margin-top:0;visibility:visible;opacity:1}.site-navbar .site-navigation .site-menu.site-menu-dark > li > a{color:#000}.site-mobile-menu{width:300px;position:fixed;right:0;z-index:2000;padding-top:20px;background:#fff;height:calc(100vh);-webkit-transform:translateX(110%);-ms-transform:translateX(110%);transform:translateX(110%);-webkit-box-shadow:-10px 0 20px -10px rgba(0,0,0,0.1);box-shadow:-10px 0 20px -10px rgba(0,0,0,0.1);-webkit-transition:.3s all ease-in-out;-o-transition:.3s all ease-in-out;transition:.3s all ease-in-out}.offcanvas-menu .site-mobile-menu{-webkit-transform:translateX(0%);-ms-transform:translateX(0%);transform:translateX(0%)}.site-mobile-menu .site-mobile-menu-header{width:100%;float:left;padding-left:20px;padding-right:20px}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-close{float:right;margin-top:8px}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-close span{font-size:30px;display:inline-block;padding-left:10px;padding-right:0;line-height:1;cursor:pointer;-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-close span:hover{color:#25262a}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-logo{float:left;margin-top:10px;margin-left:0}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-logo a{display:inline-block;text-transform:uppercase}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-logo a img{max-width:70px}.site-mobile-menu .site-mobile-menu-header .site-mobile-menu-logo a:hover{text-decoration:none}.site-mobile-menu .site-mobile-menu-body{overflow-y:scroll;-webkit-overflow-scrolling:touch;position:relative;padding:0 20px 20px;height:calc(100vh - 52px);padding-bottom:150px}.site-mobile-menu .site-nav-wrap{padding:0;margin:0;list-style:none;position:relative}.site-mobile-menu .site-nav-wrap a{padding:10px 20px;display:block;position:relative;color:#212529}.site-mobile-menu .site-nav-wrap a:hover{color:#8bc34a}.site-mobile-menu .site-nav-wrap li{position:relative;display:block}.site-mobile-menu .site-nav-wrap li.active > a{color:#8bc34a!important}.site-mobile-menu .site-nav-wrap .arrow-collapse{position:absolute;right:0;top:10px;z-index:20;width:36px;height:36px;text-align:center;cursor:pointer;border-radius:50%}.site-mobile-menu .site-nav-wrap .arrow-collapse:hover{background:#f8f9fa}.site-mobile-menu .site-nav-wrap .arrow-collapse:before{font-size:12px;z-index:20;font-family:"icomoon";content:"\f078";position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-180deg);-ms-transform:translate(-50%,-50%) rotate(-180deg);transform:translate(-50%,-50%) rotate(-180deg);-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}.site-mobile-menu .site-nav-wrap .arrow-collapse.collapsed:before{-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.site-mobile-menu .site-nav-wrap > li{display:block;position:relative;float:left;width:100%}.site-mobile-menu .site-nav-wrap > li > a{padding-left:20px;font-size:20px}.site-mobile-menu .site-nav-wrap > li > ul{padding:0;margin:0;list-style:none}.site-mobile-menu .site-nav-wrap > li > ul > li{display:block}.site-mobile-menu .site-nav-wrap > li > ul > li > a{padding-left:40px;font-size:16px}.site-mobile-menu .site-nav-wrap > li > ul > li > ul{padding:0;margin:0}.site-mobile-menu .site-nav-wrap > li > ul > li > ul > li{display:block}.site-mobile-menu .site-nav-wrap > li > ul > li > ul > li > a{font-size:16px;padding-left:60px}.site-mobile-menu .site-nav-wrap[data-class="social"]{float:left;width:100%;margin-top:30px;padding-bottom:5em}.site-mobile-menu .site-nav-wrap[data-class="social"] > li{width:auto}.site-mobile-menu .site-nav-wrap[data-class="social"] > li:first-child a{padding-left:15px!important}.sticky-wrapper{position:absolute;z-index:100;width:100%;background:#fff}@media (max-width: 991.98px){.sticky-wrapper{display:none}}.sticky-wrapper + .site-blocks-cover{margin-top:96px}.sticky-wrapper .site-navbar{-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease;border-bottom:1px solid #efefef}.sticky-wrapper .site-navbar .site-logo a{color:#000}.sticky-wrapper .site-navbar .site-menu > li{display:inline-block}.sticky-wrapper .site-navbar .site-menu > li.active > a{color:#000}.sticky-wrapper.is-sticky .site-navbar .site-logo a{color:#000}.sticky-wrapper.is-sticky .site-navbar .site-menu > li{display:inline-block}.sticky-wrapper.is-sticky .site-navbar .site-menu > li > a{display:inline-block;text-decoration:none!important}.sticky-wrapper.is-sticky .site-navbar .site-menu > li > a:hover{color:#000}.sticky-wrapper.is-sticky .site-navbar .site-menu > li > a.active:after{background:#8bc34a}.sticky-wrapper.is-sticky .site-navbar .site-menu > li.active > a{color:#000}.sticky-wrapper .shrink{padding-top:10px!important;padding-bottom:10px!important}.intro-section{background-size:cover;position:relative}.intro-section,.intro-section .container .row{height:100vh;min-height:700px}.intro-section.innerpage,.intro-section.innerpage .container .row{height:75vh;min-height:500px}.intro-section:before{content:"";position:absolute;height:100%;width:100%;background:#222;opacity:.3;border-bottom-right-radius:0;background-size:cover;background-position:center;background-repeat:no-repeat}@media (max-width: 991.98px){.intro-section:before{width:100%}}.intro-section h1{font-size:3rem;font-weight:300;color:#fff}.intro-section h1 strong{font-weight:700}.intro-section p{color:#fff;font-size:1.1rem}.intro-section p a{color:#fff;text-decoration:underline}.owl-slide-3,.owl-slide,.owl-style{position:relative}.owl-slide-3 .owl-stage,.owl-slide .owl-stage,.owl-style .owl-stage{padding-top:30px;padding-bottom:30px}.owl-slide-3 .owl-nav .owl-prev,.owl-slide-3 .owl-nav .owl-next,.owl-slide .owl-nav .owl-prev,.owl-slide .owl-nav .owl-next,.owl-style .owl-nav .owl-prev,.owl-style .owl-nav .owl-next{position:absolute;top:50%;text-align:center;width:40px;height:40px;-webkit-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);background:#fff}.owl-slide-3 .owl-nav .owl-prev > span,.owl-slide-3 .owl-nav .owl-next > span,.owl-slide .owl-nav .owl-prev > span,.owl-slide .owl-nav .owl-next > span,.owl-style .owl-nav .owl-prev > span,.owl-style .owl-nav .owl-next > span{font-size:1.5rem;position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.owl-slide-3 .owl-nav .owl-prev,.owl-slide .owl-nav .owl-prev,.owl-style .owl-nav .owl-prev{left:0}.owl-slide-3 .owl-nav .owl-next,.owl-slide .owl-nav .owl-next,.owl-style .owl-nav .owl-next{right:0}.owl-slide-3 .owl-dots,.owl-slide .owl-dots,.owl-style .owl-dots{position:absolute;bottom:-0;left:50%;-webkit-transform:translateX(-50%);-ms-transform:translateX(-50%);transform:translateX(-50%);text-align:center}.owl-slide-3 .owl-dots .owl-dot,.owl-slide .owl-dots .owl-dot,.owl-style .owl-dots .owl-dot{display:inline-block}.owl-slide-3 .owl-dots .owl-dot > span,.owl-slide .owl-dots .owl-dot > span,.owl-style .owl-dots .owl-dot > span{border-radius:0;display:inline-block;width:18px;height:4px;margin:2px 5px;background:rgba(0,0,0,0.2)}.owl-slide-3 .owl-dots .owl-dot.active > span,.owl-slide .owl-dots .owl-dot.active > span,.owl-style .owl-dots .owl-dot.active > span{background:#8bc34a}.owl-slide .owl-nav{display:none}@media (max-width: 991.98px){.owl-style .owl-nav{display:none}}#loader{position:fixed;width:96px;height:96px;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background-color:rgba(255,255,255,0.9);-webkit-box-shadow:0 24px 64px rgba(0,0,0,0.24);box-shadow:0 24px 64px rgba(0,0,0,0.24);border-radius:16px;opacity:0;visibility:hidden;-webkit-transition:opacity .2s ease-out,visibility 0 linear .2s;-o-transition:opacity .2s ease-out,visibility 0 linear .2s;transition:opacity .2s ease-out,visibility 0 linear .2s;z-index:2000}#loader.fullscreen{padding:0;left:0;top:0;width:100%;height:100%;-webkit-transform:none;-ms-transform:none;transform:none;background-color:#fff;border-radius:0;-webkit-box-shadow:none;box-shadow:none}#loader.show{-webkit-transition:opacity .4s ease-out,visibility 0 linear 0;-o-transition:opacity .4s ease-out,visibility 0 linear 0;transition:opacity .4s ease-out,visibility 0 linear 0;visibility:visible;opacity:1}#loader .circular{-webkit-animation:loader-rotate 2s linear infinite;animation:loader-rotate 2s linear infinite;position:absolute;left:calc(50% - 24px);top:calc(50% - 24px);display:block;-webkit-transform:rotate(0deg);-ms-transform:rotate(0deg);transform:rotate(0deg)}#loader .path{stroke-dasharray:1,200;stroke-dashoffset:0;-webkit-animation:loader-dash 1.5s ease-in-out infinite;animation:loader-dash 1.5s ease-in-out infinite;stroke-linecap:round}@-webkit-keyframes loader-rotate{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes loader-rotate{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes loader-dash{0%{stroke-dasharray:1,200;stroke-dashoffset:0}50%{stroke-dasharray:89,200;stroke-dashoffset:-35px}100%{stroke-dasharray:89,200;stroke-dashoffset:-136px}}@keyframes loader-dash{0%{stroke-dasharray:1,200;stroke-dashoffset:0}50%{stroke-dasharray:89,200;stroke-dashoffset:-35px}100%{stroke-dasharray:89,200;stroke-dashoffset:-136px}}.services-1-wrap .service-1{padding:20px 30px;border:1px solid #efefef;border-right:none;position:relative}@media (max-width: 1199.98px){.services-1-wrap .service-1{border:1px solid #efefef;margin-bottom:30px}}.services-1-wrap .service-1 .number{position:absolute;right:10px;top:10px;font-weight:400;font-family:"Cabin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";color:#dcdcdc}.services-1-wrap .service-1 .service-1-icon{position:relative;margin-left:20px}.services-1-wrap .service-1 .service-1-icon:before{position:absolute;content:"";-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);z-index:-1;left:-20px;border-top:40px solid transparent;border-bottom:40px solid transparent;border-right:40px solid #8bc34a}.services-1-wrap .service-1 .service-1-icon > span{color:#000;font-size:4rem}.services-1-wrap .service-1 .service-1-content .service-heading{font-size:1.5rem;color:#000;font-weight:400}.services-1-wrap .service-1 .service-1-content p{font-size:15.5px}.services-1-wrap [class^="col-"]:last-child .service-1{border-right:1px solid #efefef}.header-top > .container{padding-top:30px;padding-bottom:30px}.header-top .quick-contact-icons .icon{margin-right:10px}.header-top .quick-contact-icons .icon span{font-size:40px;line-height:0}.header-top .quick-contact-icons .text .h4{font-size:1.2rem;color:#000;margin-bottom:0}.header-top .quick-contact-icons .text .caption-text{font-size:1rem}.block-2{background:#09162a;padding:7rem 0}.block-2 .img-overlap{margin-top:-150px}.block-3{background:#09162a;padding:7rem 0;margin-bottom:14rem}.section-title{color:#000;margin-bottom:50px}.section-title h2{font-size:20px;font-weight:400;border-bottom:1px solid #222;position:relative;display:inline-block}.section-title h2:before{position:absolute;content:"";height:1px;background:#777}.section-subtitle{font-weight:300;color:#8bc34a;text-transform:uppercase;font-size:1.3rem}.line-height-0{line-height:0}.projects-carousel-wrap{position:relative;margin-bottom:-200px}.project-item{position:relative;overflow:hidden}.project-item:before{content:"";background:rgba(0,0,0,0.7);top:0;left:0;right:0;bottom:0;position:absolute;opacity:0;visibility:hidden;z-index:1;-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}.project-item img{-webkit-transition:.5s all ease;-o-transition:.5s all ease;transition:.5s all ease;-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1)}.project-item .project-item-contents{z-index:9;position:absolute;bottom:20px;left:20px;right:20px;-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease;-webkit-transform:translateY(100%);-ms-transform:translateY(100%);transform:translateY(100%);opacity:0;visibility:hidden}.project-item .project-item-contents .project-item-category{color:#8bc34a;font-family:"Cabin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";text-transform:uppercase}.project-item .project-item-contents .project-item-title{color:#fff;margin-bottom:0}.project-item:hover:before{opacity:1;visibility:visible}.project-item:hover .project-item-contents{-webkit-transform:translateY(0%);-ms-transform:translateY(0%);transform:translateY(0%);opacity:1;visibility:visible}.project-item:hover img{-webkit-transform:scale(1.2);-ms-transform:scale(1.2);transform:scale(1.2)}.form-control:hover,.form-control:focus,.form-control:active{outline:none;-webkit-box-shadow:none;box-shadow:none}.btn{text-transform:uppercase;font-size:14px;letter-spacing:.2rem;font-family:"Cabin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}.quote-form-wrap{background:#09162a;padding:5rem}.quote-form .form-control{border:none;border-bottom:2px solid rgba(255,255,255,0.5);border-radius:0;background:transparent;color:#fff;padding:10px 0}.quote-form .form-control::-webkit-input-placeholder{color:#fff}.quote-form .form-control::-moz-placeholder{color:#fff}.quote-form .form-control:-ms-input-placeholder{color:#fff}.quote-form .form-control:-moz-placeholder{color:#fff}.quote-form .btn-primary:hover{background:#000;border-color:#000;color:#fff}.person{position:relative}.person figure{margin-bottom:0;padding-bottom:0;position:relative;overflow:hidden;margin-bottom:30px}.person img{-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}.person .person-contents{text-align:center}.person .person-contents h3{color:#000}.person .person-contents .position{color:#8bc34a}.person:hover img{-webkit-transform:scale(1.05);-ms-transform:scale(1.05);transform:scale(1.05)}.person .social{position:absolute;bottom:10px;left:10px;z-index:2}.person .social a{display:block;margin-bottom:10px;width:40px;height:40px;background:#fff;position:relative}.person .social a > span{position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.person .social a:hover{background:#000;color:#fff}.testimonial img{width:100px;height:100px;border-radius:50%;margin-bottom:20px}.testimonial blockquote p{font-size:20px;color:#000;font-weight:700}.testimonial .client-name{font-family:"Cabin",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";text-transform:uppercase;font-size:1.2rem;color:#8bc34a}.blog-entry .img-link{display:block;position:relative;overflow:hidden;margin-bottom:30px}.blog-entry .img-link img{-webkit-transition:.3s all ease;-o-transition:.3s all ease;transition:.3s all ease}.blog-entry .img-link:hover img{-webkit-transform:scale(1.05);-ms-transform:scale(1.05);transform:scale(1.05)}.blog-entry .blog-entry-contents h3{line-height:1}.blog-entry .blog-entry-contents h3 a{color:#000;font-weight:400;font-size:1.5rem}.blog-entry .blog-entry-contents .meta{font-size:1rem}.blog-entry .blog-entry-contents .meta,.blog-entry .blog-entry-contents .meta a{color:#b0b0b0}.blog-entry .blog-entry-contents .meta a{color:#8bc34a}.sidebar-box{margin-bottom:30px;padding:25px;font-size:15px;width:100%;float:left;background:#fff}.sidebar-box :last-child{margin-bottom:0}.sidebar-box h3{font-size:18px;margin-bottom:15px}.categories li,.sidelink li{position:relative;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dotted #dee2e6;list-style:none}.categories li:last-child,.sidelink li:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0}.categories li a,.sidelink li a{display:block}.categories li a span,.sidelink li a span{position:absolute;right:0;top:0;color:#ccc}.categories li.active a,.sidelink li.active a{color:#000;font-style:italic}.comment-form-wrap{clear:both}.comment-list{padding:0;margin:0}.comment-list .children{padding:50px 0 0 40px;margin:0;float:left;width:100%}.comment-list li{padding:0;margin:0 0 30px;float:left;width:100%;clear:both;list-style:none}.comment-list li .vcard{width:80px;float:left}.comment-list li .vcard img{width:50px;border-radius:50%}.comment-list li .comment-body{float:right;width:calc(100% - 80px)}.comment-list li .comment-body h3{font-size:18px;color:#000}.comment-list li .comment-body .meta{text-transform:uppercase;font-size:13px;letter-spacing:.1em;color:#ccc}.comment-list li .comment-body .reply{padding:5px 10px;background:#e6e6e6;color:#000;text-transform:uppercase;font-size:14px}.comment-list li .comment-body .reply:hover{color:#000;background:#e3e3e3}.post-meta{font-size:.8rem}.post-meta a{color:#000}.bio-pic{-webkit-box-flex:0;-ms-flex:0 0 40px;flex:0 0 40px}.bio-pic img{max-width:100%;border-radius:50%}.date-read{color:#b4b4b4}.post-entry-1,.post-entry-2{font-size:.9rem;margin-bottom:30px}.post-entry-1 img,.post-entry-2 img{margin-bottom:30px}.post-entry-1 h2,.post-entry-2 h2{font-size:20px}.post-entry-1 h2 a,.post-entry-2 h2 a{color:#000}.post-entry-2{font-size:.9rem}.post-entry-2 .thumbnail{background-size:cover;background-position:center;width:30%}.post-entry-2 .contents{width:70%;padding:10px 20px}.post-entry-2 .contents h2{font-size:15px}.trend-entry{margin-bottom:30px}.trend-entry .number{-webkit-box-flex:0;-ms-flex:0 0 50px;flex:0 0 50px;font-size:30px;line-height:1;color:#a3a3a3}.trend-entry .trend-contents h2{font-size:18px}.trend-entry .trend-contents h2 a{color:#000}.caption{font-size:.9rem;text-transform:uppercase;letter-spacing:.1rem}.caption.small{font-size:.6rem}.half-post-entry .caption{font-size:.9rem;text-transform:uppercase;letter-spacing:.1rem}.half-post-entry .img-bg,.half-post-entry .contents{width:50%}@media (max-width: 991.98px){.half-post-entry .img-bg,.half-post-entry .contents{width:100%;height:300px}}.half-post-entry .img-bg{background-size:cover;background-position:center center;background-repeat:no-repeat}.half-post-entry .contents{padding:50px;font-size:.9rem;height:auto}@media (max-width: 991.98px){.half-post-entry .contents{padding:30px}}.half-post-entry .contents h2{font-size:26px}.half-post-entry .contents h2 a{color:#000}.more{color:#8bc34a;text-transform:uppercase;font-size:.83rem}.custom-pagination{padding:0;margin:0;font-size:.89rem;color:#000}.custom-pagination li{display:inline-block}.custom-pagination li a{padding:10px;display:inline-block;color:#b3b3b3}.custom-pagination li a:hover{color:#000}.custom-pagination li.active a{color:#000}.form-control{margin-right:10px;height:50px;padding-left:20px;padding-right:20px;border-radius:30px;border:none;background:#fff;border-bottom:1px solid transparent;border-bottom:1px solid #ccc}.form-control:active,.form-control:focus{border-bottom:1px solid #ccc}.btn{border-radius:30px;background:#000;padding-left:20px;padding-right:20px;border-color:#000;color:#fff}.subscribe form .form-control{margin-right:10px;height:50px;padding-left:20px;padding-right:20px;border-radius:30px;border:none;background:#fff;border-bottom:1px solid transparent;border-bottom:1px solid #ccc}.subscribe form .form-control:active,.subscribe form .form-control:focus{border-bottom:1px solid #ccc}.subscribe form .btn{border-radius:30px;background:#000;padding-left:20px;padding-right:20px;border-color:#000}.subscribe form .btn:hover{background:#8bc34a;border-color:#8bc34a}.subscribe form h2{font-size:1.2rem;color:#000}.subscribe form p{font-size:.9rem}.search-form .form-control{margin-right:10px;height:50px;padding-left:20px;padding-right:20px;border-radius:30px;border:none;background:#fff;border-bottom:1px solid transparent;border-bottom:1px solid #ccc}.search-form .form-control:active,.search-form .form-control:focus{border-bottom:1px solid #ccc}.search-form .btn{border-radius:30px;background:#000;padding-left:20px;padding-right:20px;border-color:#000}.search-form .btn:hover{background:#8bc34a;border-color:#8bc34a}.search-form h2{font-size:1.2rem;color:#000}.search-form p{font-size:.9rem}.footer{font-size:.85rem;text-align:center;padding:2rem 0}.top-social a{color:#000}.top-social a:hover{color:#777}.single-content h1{font-size:2rem;color:#000}.single-content{font-size:.9rem}
-@media (min-width: 768px){
-.site-section,.hero-slide {
-    padding: 1em 0!important;
-    padding-bottom: 3em!important;
-}}
+    *{padding:0;margin:0;text-decoration:none;list-style:none;box-sizing:border-box}.navlink_active{-webkit-box-shadow:0 -2px 0 #3740ff inset;box-shadow:0 -2px 0 #3740ff inset}nav{background:#fff;height:65px;width:100%;-webkit-box-shadow:0 1px 2px 0 rgba(60,64,67,0.3),0 2px 6px 2px rgba(60,64,67,0.15);box-shadow:0 1px 2px 0 rgba(60,64,67,0.3),0 2px 6px 2px rgba(60,64,67,0.15)}label.logo{color:#fff;font-size:35px;line-height:80px;padding:0 100px;font-weight:700}nav ul{float:right;margin-right:20px}nav ul li{display:inline-block;line-height:52px;margin:0 5px}nav li:hover{background:#f0f0f0}nav ul li a{color:#202124;font-size:15px;padding:7px 13px;font-weight:500;display:flex}.checkbtn{font-size:30px;color:#000;float:right;line-height:80px;margin-right:40px;cursor:pointer;display:none}#check{display:none}@media (max-width: 952px){label.logo{font-size:30px;padding-left:50px}nav ul li a{font-size:16px}}@media (max-width: 858px){.checkbtn{display:block}nav ul{position:fixed;width:100%;height:100vh;background:#2c3e50;top:80px;left:-100%;text-align:center;transition:all .5s}nav ul li{display:block;margin:50px 0;line-height:40px}nav ul li a{font-size:20px}#check:checked ~ ul{left:0}}
+  nav{
+    width: 100%;
+  }
+  img{
+    max-width: 100%;
+    object-fit: cover;
+  height: auto; 
+  vertical-align: middle;
+   }
+.content{
+  display: grid;
+
+   max-width: 800px;
+   margin-top: 1rem;
+}
+code, pre {
+    background: #f7f7f7;
+    border: 1px solid #dadce0;
+    color: #202124;
+    font: 1rem/1.5em SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+    -ms-hyphens: none;
+    hyphens: none;
+    -moz-tab-size: 2;
+    -o-tab-size: 2;
+    tab-size: 2;
+    text-align: left;
+    word-spacing: normal;
+    padding: 2px 2px;
+}
+.content_main{
+  display: grid;
+  max-width: 800px;
+margin-left: auto;
+margin-right: auto;
+padding-left:1.2rem;
+padding-right:1.2rem;
+}
 @media(max-width:600px){
-  .thumbnail{
-    display:none;
+  .content_main{
+    width: 100vw;
+    max-width: 100%;
+    padding-right: 0;
+  }
+  .container{
+    width: auto;
+    min-width: 100%;
   }
 }
-.date-read{color:#5f5e5e!important;}
-p {
-  color: rgb(61, 61, 61)!important;
-}
-</style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cabin&display=swap" onload="this.rel='stylesheet'" />
-
-
-<link rel="stylesheet" href="/static/css/owl.carousel.min.css">
-<link rel="stylesheet" href="/static/css/owl.theme.default.min.css">
-
-
-
-</head>
-
-<body>
-  <div class="site-wrap">
-
-    <div class="site-mobile-menu site-navbar-target">
-      <div class="site-mobile-menu-header">
-        <div class="site-mobile-menu-close mt-3">
-          <span class="icon-close2 js-menu-toggle"></span>
-        </div>
-      </div>
-      <div class="site-mobile-menu-body"></div>
-    </div>
-
-
-    
-    <div class="header-top">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-12 col-lg-6 d-flex">
-            <a href="/" class="site-logo">
-              Codingunda
-            </a>
-
-            <a href="#" class="ml-auto d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black"><span
-                class="icon-menu h3"></span></a>
-
-          </div>
-          <div class="col-12 col-lg-6 ml-auto d-flex">
-            <div class="ml-md-auto top-social d-none d-lg-inline-block">
-              <a href="#" class="d-inline-block p-3"><span class="icon-facebook"></span></a>
-                <a href="#" class="d-inline-block p-3"><span class="icon-twitter"></span></a>
-                <a href="#" class="d-inline-block p-3"><span class="icon-instagram"></span></a>
-            </div>
-            <form action="/search" class="search-form d-inline-block" method="GET" style="background:white!important">
-
-              <div class="d-flex">
-                <input type="text" class="form-control" placeholder="Search..." name="query" value = "" required>
-                <button type="submit" class="btn btn-secondary py-0 px-3" style = "background:white!important;" ><span class="icon-search" >
-
-                <img src="/static/images/users/search.svg" alt="Search" height="40" width="40">
-
-                </span></button>
-              </div>
-            </form>
-
-            
-          </div>
-          <div class="col-6 d-block d-lg-none text-right">
-            
-          </div>
-        </div>
-      </div>
-      
-
-
-      
-      <div class="site-navbar py-2 js-sticky-header site-navbar-target d-none pl-0 d-lg-block" role="banner">
-
-      <div class="container">
-        <div class="d-flex align-items-center">
-          
-          <div class="mr-auto">
-            <nav class="site-navigation position-relative text-right" role="navigation">
-              <ul class="site-menu main-menu js-clone-nav mr-auto d-none pl-0 d-lg-block">
-                <li class="
-                
-                  
-                
-                  ">
-                  <a href="/" class="nav-link text-left">Home</a>
-                </li>
-                <li class="
-                
-                  
-                
-                  ">
-                  <a href="/about" class="nav-link text-left">About</a>
-                </li> 
-              
-                <li class="
-                
-                  
-                
-                  "><a href="/contact" class="nav-link text-left">Contact</a></li>
-                
-                <li><a href="/logout" class="nav-link text-right text-info">Sign Out</a></li>
-                
-              </ul>                                                                                                                                                                                                                                                                                         
-            </nav>
-
-          </div>
-         
-        </div>
-      </div>
-
-    </div>
-    
-    </div>
-
-    
-</div>
-
-
-    
-  
-    <div class="site-section py-0">
-      <div class="owl-carousel hero-slide owl-style owl-lazy">
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/faraday-future-ff-91-interior_100724881.jpg); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/five-ways-to-load-lazy">Five Ways to Lazy Load Images for Better Website Performance</a></h2>
-                <p class="mb-3">You can lazy load images with this interesting blurring effect in a number of ways. My favorite technique is by Craig Buckler. Here’s all the goodness of this solution:</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">Performance</a>, 
-                    
-                      <a href="#">Javascript</a>, 
-                    
-                      <a href="#">Lazy Load</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 24, 2020<span class="mx-1">&bullet;</span>5 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span></span>
-                </div>
-<a href="/blog/five-ways-to-load-lazy" style ="text-decoration:underline;color:rgb(57, 79, 242);" ><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/hero_8JGnM64.jpg); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/techniques-to-make-website-fast">Techniques to make a web app load fast, even on a feature phone</a></h2>
-                <p class="mb-3">Performance is important, and that includes both loading performance and runtime performance. It has been shown that good performance correlates with ...</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">Memory</a>, 
-                    
-                      <a href="#">Performance</a>, 
-                    
-                      <a href="#">Fast Website</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 24, 2020<span class="mx-1">&bullet;</span>5 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span></span>
-                </div>
-<a href="/blog/techniques-to-make-website-fast" style ="text-decoration:underline;color:rgb(57, 79, 242);" ><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/healthy-eating-food-groceries-ingredients-vegetables-keto-kitchen-732x549-thumbna_9WbJNY0.jpg); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/what-is-html-how-to-get-started">What is HTML? How to get started</a></h2>
-                <p class="mb-3">HTML stands for Hyper Text Markup Language. HTML is the standard markup language for creating Web pages. HTML describes the structure of a Web page. HTML consists of a series of elements. HTML elements tell the browser how to display the content.</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">html</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 23, 2020<span class="mx-1">&bullet;</span>1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span></span>
-                </div>
-<a href="/blog/what-is-html-how-to-get-started" style ="text-decoration:underline;color:rgb(57, 79, 242);" ><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/7bf5af8e69b903dfacbdbc62d459307e.jpg); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/what-is-python">What is python and it&#x27;s uses?</a></h2>
-                <p class="mb-3">HTML stands for Hypertext Markup Language. It allows the user to create and structure sections, paragraphs, headings, links, and blockquotes for web pages and applications.</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">programming</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 23, 2020<span class="mx-1">&bullet;</span>4 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span></span>
-                </div>
-<a href="/blog/what-is-python" style ="text-decoration:underline;color:rgb(57, 79, 242);" ><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/Elon-Musk-Failure-Quotes-Images_1.png); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/slig">title</a></h2>
-                <p class="mb-3">this ogjdsl</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">django</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 3, 2020<span class="mx-1">&bullet;</span>1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span></span>
-                </div>
-<a href="/blog/slig" style ="text-decoration:underline;color:rgb(57, 79, 242);" ><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-
-      </div>
-    </div>
-  
-<div class="container">
-          <div class="section-title">
-            <h2>Trending on innovators</h2>
-          </div>
-                <div class=" row  row-cols-md-3">
-            
-            <div class="trend-entry d-flex ">
-              <div class="number align-self-start">01</div>
-              <div class="trend-contents " >
-                <h2><a href="/blog/what-is-html-how-to-get-started">What is HTML? How to get started</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">html</a>, 
-                    
-
-
-                  </span>
-                  <span class="date-read">1 day, 22 hours ago<span class="mx-1">&bullet;</span> 1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex ">
-              <div class="number align-self-start">02</div>
-              <div class="trend-contents " >
-                <h2><a href="/blog/what-is-python">What is python and it&#x27;s uses?</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">programming</a>, 
-                    
-
-
-                  </span>
-                  <span class="date-read">1 day, 22 hours ago<span class="mx-1">&bullet;</span> 4 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex ">
-              <div class="number align-self-start">03</div>
-              <div class="trend-contents " >
-                <h2><a href="/blog/techniques-to-make-website-fast">Techniques to make a web app load fast, even on a feature phone</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">Memory</a>, 
-                    
-                      <a href="#">Performance</a>, 
-                    
-                      <a href="#">Fast Website</a>, 
-                    
-
-
-                  </span>
-                  <span class="date-read">18 hours, 8 minutes ago<span class="mx-1">&bullet;</span> 5 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex ">
-              <div class="number align-self-start">04</div>
-              <div class="trend-contents " >
-                <h2><a href="/blog/five-ways-to-load-lazy">Five Ways to Lazy Load Images for Better Website Performance</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">Performance</a>, 
-                    
-                      <a href="#">Javascript</a>, 
-                    
-                      <a href="#">Lazy Load</a>, 
-                    
-
-
-                  </span>
-                  <span class="date-read">14 hours, 8 minutes ago<span class="mx-1">&bullet;</span> 5 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            
-           
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-    <!-- END section -->
-
-
-
-    <div class="site-section py-0">
-        
-        <div class="site-section">
-          <div class="container">
-            <div class="half-post-entry d-block d-lg-flex bg-light">
-         <div class="img-bg" style="background-image: url(/media/images/thumb-512x512-3.jpg); background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents">
-                <span class="caption"></span>
-                <h2><a href="/blog/earn-online">Best way to optimize site for SEO 2020</a></h2>
-                <p class="mb-3">Well this is the description of test blog site.</p>
-                
-                <div class="post-meta">
-                  <span class="d-block">
-                    
-                    
-                      <a href="#">django</a>, 
-                    
-                      <a href="#">programming</a>, 
-                    
-                      <a href="#">earnmoney</a>, 
-                    
-
-                  </span>
-                  <span class="date-read">Oct. 1, 2020<span class="mx-1">&bullet;</span>1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-<a href="/blog/earn-online" style ="text-decoration:underline;color:rgb(57, 79, 242);"><span>Continue reading</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-
-    </div>
-
-
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-9">
-            <div class="section-title">
-              <h2>More from the innivators</h2>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/thumb-512x512-3.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/earn-online" style = "font-size: 20px!important;">Best way to optimize site for SEO 2020</a></h2>
-                <p class="mb-3">Well this is the description of test blog site.</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 1, 2020 <span class="mx-1">&bullet;</span> 1 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/geek-post-1549351643.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/best-languages" style = "font-size: 20px!important;">Best programming lanuages</a></h2>
-                <p class="mb-3">description of the psit</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 2, 2020 <span class="mx-1">&bullet;</span> 2 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/Django_Setup_Watermark.webp); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/did-you-watch-the-new-blog" style = "font-size: 20px!important;">Djnagno tutorials for beginners in 2020</a></h2>
-                <p class="mb-3">And black on meretriciously regardless well fearless irksomely as about hideous wistful bat less oh much and occasional useful rat darn jeepers far.</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 2, 2020 <span class="mx-1">&bullet;</span> 1 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/converted_image_8.PNG); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/speed-up-site" style = "font-size: 20px!important;">12 Tricks to speed up your site like a rocket</a></h2>
-                <p class="mb-3">Something unusual happened to me yesterday. Actually, for me it wasn’t just unusual — it was a first. I was made an offer I couldn’t refuse. Or at least that’s what the top people at the National Enquirer thought.</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 3, 2020 <span class="mx-1">&bullet;</span> 5 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/Elon-Musk-Failure-Quotes-Images_1.png); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/slig" style = "font-size: 20px!important;">title</a></h2>
-                <p class="mb-3">this ogjdsl</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 3, 2020 <span class="mx-1">&bullet;</span> 1 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/7bf5af8e69b903dfacbdbc62d459307e.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/what-is-python" style = "font-size: 20px!important;">What is python and it&#x27;s uses?</a></h2>
-                <p class="mb-3">HTML stands for Hypertext Markup Language. It allows the user to create and structure sections, paragraphs, headings, links, and blockquotes for web pages and applications.</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 23, 2020 <span class="mx-1">&bullet;</span> 4 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/healthy-eating-food-groceries-ingredients-vegetables-keto-kitchen-732x549-thumbna_9WbJNY0.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/what-is-html-how-to-get-started" style = "font-size: 20px!important;">What is HTML? How to get started</a></h2>
-                <p class="mb-3">HTML stands for Hyper Text Markup Language. HTML is the standard markup language for creating Web pages. HTML describes the structure of a Web page. HTML consists of a series of elements. HTML elements tell the browser how to display the content.</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 23, 2020 <span class="mx-1">&bullet;</span> 1 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/hero_8JGnM64.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/techniques-to-make-website-fast" style = "font-size: 20px!important;">Techniques to make a web app load fast, even on a feature phone</a></h2>
-                <p class="mb-3">Performance is important, and that includes both loading performance and runtime performance. It has been shown that good performance correlates with ...</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 24, 2020 <span class="mx-1">&bullet;</span> 5 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div id = "image_thumbnail" style="width:100%; height:auto;">
-
-            </div>            
-            <div class="post-entry-2 d-flex">
-              <div class="thumbnail order-md-2" style="background-image: url(/media/images/faraday-future-ff-91-interior_100724881.jpg); height: 8rem; width: 10rem; background-size: 100%; background-repeat: no-repeat;"></div>
-              <div class="contents order-md-1 pl-0">
-                <span class="caption mb-4 d-block"></span>
-                <h2><a href="/blog/five-ways-to-load-lazy" style = "font-size: 20px!important;">Five Ways to Lazy Load Images for Better Website Performance</a></h2>
-                <p class="mb-3">You can lazy load images with this interesting blurring effect in a number of ways. My favorite technique is by Craig Buckler. Here’s all the goodness of this solution:</p>
-                <div class="post-meta">
-                  <span class="d-block">
-                  </span>
-                  <span class="date-read">Oct. 24, 2020 <span class="mx-1">&bullet;</span> 5 MIN read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-          </div>
-          <div class="col-lg-3">
-            <div class="section-title">
-              <h2>Popular Posts</h2>
-            </div>
-            
-            <div class="trend-entry d-flex">
-              <div class="number align-self-start">01</div>
-              <div class="trend-contents">
-                <h2><a href="/blog/earn-online">Best way to optimize site for SEO 2020</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-
-                 
-                  </span>
-                  <span class="date-read">3 weeks, 2 days ago<span class="mx-1">&bullet;</span> 1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex">
-              <div class="number align-self-start">02</div>
-              <div class="trend-contents">
-                <h2><a href="/blog/speed-up-site">12 Tricks to speed up your site like a rocket</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-
-                 
-                  </span>
-                  <span class="date-read">3 weeks, 1 day ago<span class="mx-1">&bullet;</span> 5 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex">
-              <div class="number align-self-start">03</div>
-              <div class="trend-contents">
-                <h2><a href="/blog/did-you-watch-the-new-blog">Djnagno tutorials for beginners in 2020</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-
-                 
-                  </span>
-                  <span class="date-read">3 weeks, 1 day ago<span class="mx-1">&bullet;</span> 1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex">
-              <div class="number align-self-start">04</div>
-              <div class="trend-contents">
-                <h2><a href="/blog/what-is-html-how-to-get-started">What is HTML? How to get started</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-
-                 
-                  </span>
-                  <span class="date-read">1 day, 22 hours ago<span class="mx-1">&bullet;</span> 1 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="trend-entry d-flex">
-              <div class="number align-self-start">05</div>
-              <div class="trend-contents">
-                <h2><a href="/blog/best-languages">Best programming lanuages</a></h2>
-                <div class="post-meta">
-                  <span class="d-block">
-
-                 
-                  </span>
-                  <span class="date-read">3 weeks, 1 day ago<span class="mx-1">&bullet;</span> 2 Min read  <span class="svgIcon svgIcon--star">
-                    <svg class="svgIcon-use" width="25" height="20">
-                      <path
-                        d="M7.438 2.324c.034-.099.09-.099.123 0l1.2 3.53a.29.29 0 0 0 .26.19h3.884c.11 0 .127.049.038.111L9.8 8.327a.271.271 0 0 0-.099.291l1.2 3.53c.034.1-.011.131-.098.069l-3.142-2.18a.303.303 0 0 0-.32 0l-3.145 2.182c-.087.06-.132.03-.099-.068l1.2-3.53a.271.271 0 0 0-.098-.292L2.056 6.146c-.087-.06-.071-.112.038-.112h3.884a.29.29 0 0 0 .26-.19l1.2-3.52z">
-                      </path>
-                    </svg>
-                  </span></span>
-                </div>
-              </div>
-            </div>
-            
-            
-            <p>
-            </p>
-          </div>
-        </div>
-
-        <div class="row">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination">
-              
-              <li class="page-item"><a class="page-link" href="#"></a></li>
-              
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </div>
-
-   
-
-
-
-   
-    <div class="position-relative">
-      <div class="shape shape-bottom shape-fluid-x svg-shim text-gray-200">
-        <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 48h2880V0h-720C1442.5 52 720 0 720 0H0v48z" fill="currentColor"></path></svg>
-      </div>
-    </div>
-
-
-    <section class="pt-6 pt-md-8 bg-gray-200 letterbox">
-      <div class="container pb-6 pb-md-8 border-bottom border-gray-300">
-        <div class="row align-items-center">
-          <div class="col-12 col-md">
-
-            <!-- Heading -->
-            <h3 class="mb-1 font-weight-bold">
-              Get our stories delivered
-            </h3>
-
-            <!-- Text -->
-            <p class="font-size-lg text-muted mb-6 mb-md-0">
-              From us to your inbox weekly.
-            </p>
-
-          </div>
-          <div class="col-12 col-md-5">
-
-            <!-- Form -->
-            <form>
-              <div class="row">
-                <div class="col">
-
-                  <!-- Input -->
-                  <input type="email"  class="form-control" placeholder="Enter your email">
-
-                </div>
-                <div class="col-auto">
-
-                  <!-- Button -->
-                  <button class="btn btn-primary" type="submit">
-                    Subscribe
-                  </button>
-
-                </div>
-              </div> <!-- / .row -->
-            </form>
-
-          </div>
-        </div> <!-- / .row -->
-      </div> <!-- / .container -->
-    </section>
-
-
-    <footer class="py-8 py-md-11 bg-gray-200">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-md-4 col-lg-3">
-        
-            <!-- Brand -->
-            <img src="./assets/img/brand.svg" alt="..." class="footer-brand img-fluid mb-2">
-
-            <!-- Text -->
-            <p class="text-gray-700 mb-2">
-              A better way to build.
-            </p>
-
-            <!-- Social -->
-            <ul class="list-unstyled list-inline list-social mb-6 mb-md-0">
-              <li class="list-inline-item list-social-item mr-3">
-                <a href="#!" class="text-decoration-none">
-                  <img src="./assets/img/icons/social/instagram.svg" class="list-social-icon" alt="...">
-                </a>
-              </li>
-              <li class="list-inline-item list-social-item mr-3">
-                <a href="#!" class="text-decoration-none">
-                  <img src="./assets/img/icons/social/facebook.svg" class="list-social-icon" alt="...">
-                </a>
-              </li>
-              <li class="list-inline-item list-social-item mr-3">
-                <a href="#!" class="text-decoration-none">
-                  <img src="./assets/img/icons/social/twitter.svg" class="list-social-icon" alt="...">
-                </a>
-              </li>
-              <li class="list-inline-item list-social-item">
-                <a href="#!" class="text-decoration-none">
-                  <img src="./assets/img/icons/social/pinterest.svg" class="list-social-icon" alt="...">
-                </a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-        
-            <!-- Heading -->
-            <h6 class="font-weight-bold text-uppercase text-gray-700">
-              Products
-            </h6>
-
-            <!-- List -->
-            <ul class="list-unstyled text-muted mb-6 mb-md-8 mb-lg-0">
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Page Builder
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  UI Kit
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Styleguide
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a href="#!" class="text-reset">
-                  Changelog
-                </a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-        
-            <!-- Heading -->
-            <h6 class="font-weight-bold text-uppercase text-gray-700">
-              Services
-            </h6>
-
-            <!-- List -->
-            <ul class="list-unstyled text-muted mb-6 mb-md-8 mb-lg-0">
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Documentation
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Changelog
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Pagebuilder
-                </a>
-              </li>
-              <li>
-                <a href="#!" class="text-reset">
-                  UI Kit
-                </a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="col-6 col-md-4 offset-md-4 col-lg-2 offset-lg-0">
-        
-            <!-- Heading -->
-            <h6 class="font-weight-bold text-uppercase text-gray-700">
-              Connect
-            </h6>
-
-            <!-- List -->
-            <ul class="list-unstyled text-muted mb-0">
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Page Builder
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  UI Kit
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Styleguide
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Documentation
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Changelog
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a href="#!" class="text-reset">
-                  Changelog
-                </a>
-              </li>
-            </ul>
-
-          </div>
-          <div class="col-6 col-md-4 col-lg-2">
-        
-            <!-- Heading -->
-            <h6 class="font-weight-bold text-uppercase text-gray-700">
-              Legal
-            </h6>
-
-            <!-- List -->
-            <ul class="list-unstyled text-muted mb-0">
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Documentation
-                </a>
-              </li>
-              <li class="mb-3">
-                <a href="#!" class="text-reset">
-                  Changelog
-                </a>
-              </li>
-              <li>
-                <a href="#!" class="text-reset">
-                  Pagebuilder
-                </a>
-              </li>
-            </ul>
-
-          </div>
-        </div> <!-- / .row -->
-      </div> <!-- / .container -->
-    </footer>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" async defer></script>
-
-    
-<script src = "/static/js/owl.carousel.min.js"></script>
-<script type = "text/javascript">
-$(".owl-carousel").owlCarousel({
-      autoPlay: 3000,
-      items:1,
-    margin:10,
-    autoHeight:true,
-    loop:true,
-    autoplay:true,
-    autoplayTimeout:8000,
-    lazyLoad:true,
-    autoplaySpeed:1700,
-  });
-</script>
-
-
-<script>
-  function myFunction(x) {
-    if (x.matches) { // If media query matches
-      document.getElementById('image_thumbnail').innerHTML = `
-      <div class="image_main_thumbnail" style="background-image: url();></div>
-      `
-      console.log("Done")
-    } else {
-     document.body.style.backgroundColor = "white";
+.content_main hr::before {
+      --x-height-multiplier: 0.342;
+      --baseline-multiplier: 0.22;
+      font-family: medium-content-slab-serif-font, Georgia, Cambria, "Times New Roman", Times, serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 30px;
+      letter-spacing: .6em;
+      content: '...';
+      display: inline-block;
+      margin-left: .6em;
+      color: rgba(0, 0, 0, .68);
+      position: relative;
+      top: -30px;
     }
-  }
+
+    .content_main hr {
+      margin-top: 52px;
+      margin-bottom: 42px;
+      display: block;
+      border: 0;
+      text-align: center;
+      overflow: visible;
+    }
+
+     
+.content_main a{
+  color: #3740ff;
+text-decoration: underline;}
+.content_main p{
   
-  var x = window.matchMedia("(max-width: 600px)")
-  myFunction(x) // Call listener function at run time
-  x.addListener(myFunction) // Attach listener function on state changes
-  </script>
-	
+    font: 400 18px / 1.77778 Segoe UI,system-ui,-apple-system,sans-serif;
+    margin-top: 36px;
+    margin-bottom: 36px;
 
+}
+.mx-auto{
+  margin-left: auto;
+   margin-right: auto;
+}
+ body{
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ }
+.breadcrumb{
+ /* display:flex;
+ justify-content: center;
+ margin-top:2rem; */
+ margin-right:auto;
+ margin-left: auto;
+ max-width: 800px;
+ margin-top:2rem;
+
+}
+h2,h3,h4,h5,h6{
+  font-family:'Roboto',sans-serif;
+  font-weight: 400;
+}
+h3{
+  font-size: 22px;
+}
+
+ h1{
+  font: 500 44px / 1.32143 'Roboto', sans-serif;
+    letter-spacing: -.5px;
+    line-height: 52px;
+    padding: 10px 7px;
+    color: #202124;
+ }
+ .w-breadcrumbs__icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: #5f6368;
+    transform: translateY(2px);
+}
+.breadcrumb_item {
+  color: #5f6368!important;
+  text-decoration: underline;
+  padding: 0 8px;
+ 
+}
+.breadcrumb_item_muted{
+  margin-left: 0.5rem;
+}
+a:hover{
+  text-decoration: none;
+}
+
+ul.breadcrumb li {
+  display: inline;
+}
+blockquote {
+      font-size: 19px;
+      margin: 50px auto;
+      color: #2b2b2b;
+      padding-left:1rem;
+      border-left: 3px solid #000;
+      line-height: 1.6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .content_main li{
+      margin-bottom: 0.8rem;
+      font-size: 17.5px;
+    }
+.content_main ul:not([class]) {
+    list-style: none;
+    margin: 32px 0;
+    padding-left: 48px;
+    position: relative;
+    color: #242323;
+      font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.005em;
+}
+.content_main ul:not([class])>li::before {
+    background: #4f4f4f;
+    border-radius: 50%;
+    color: #fff;
+    content: '';
+    height: 8px;
+    left: 0;
+    margin: 12px 0 0;
+    position: absolute;
+    width: 8px;
+}
+ol:not([class])>li::before {
+    -ms-flex-align: center;
+    -ms-flex-negative: 0;
+    -ms-flex-pack: center;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    align-items: center;
+    background: #535555;
+    border-radius: 50%;
+    color: #fff;
+    content: counter(ol-step-counter);
+    display: -ms-inline-flexbox;
+    display: -webkit-inline-box;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: .75em;
+    height: 20px;
+    justify-content: center;
+    left: 0;
+    margin: 6px 0 0;
+    position: absolute;
+    width: 20px;
+}
+ol:not([class])>li {
+    counter-increment: ol-step-counter;
+    font-size: 1.125rem;
+    line-height: 1.778rem;
+    margin-bottom: 8px;
+}
+ol:not([class]) {
+    counter-reset: ol-step-counter;
+    list-style: none;
+    margin: 32px 0;
+    padding-left: 48px;
+    position: relative;
+}
+ @media(max-width: 600px){
+   h1{
+     font-size: 34px;
+   }
+   .content_main p{
+     font-size:19.5px;
+   }
+ }
+ .tags {
+      padding: 8px;
+      color: rgb(43, 43, 43);
+      margin-left: -0.8rem;
+    }
+
+    .tags a {
+      list-style: none;
+      background: rgba(242, 242, 242, 1);
+      padding: 8px;
+      border-radius: 3px;
+      color: rgb(43, 43, 43) !important;
+      text-decoration: none;
+    }
+
+    .tags a:hover {
+      color: rgb(43, 43, 43) !important;
+      background: #eeeeee;
+      text-decoration: none!important;
+    }
+    .form-control{
+      width: 100%;
+      height: 12vh;
+      padding: 0.4rem;
+    }
+.btn{
+    background-color: #3740ff;
+    border: 0;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+    color: #fff;
+    cursor: pointer;
+    font-size: .875em;
+    font-weight: 600;
+    height: 56px;
+    letter-spacing: 1px;
+    overflow: hidden;
+    padding: 1rem 1rem;
+    text-transform: uppercase;
+    width: auto;
+    outline:none;
+}
+h2{ 
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-stretch: normal;
+    font-size: 25px;
+    line-height: 1.33333;
+    color: #202124;
+    margin: 64px 0px 32px;
+    overflow: visible;
+}
+.subfooter {
+    background: linear-gradient(90deg,#fff 20px,transparent 1%) center,linear-gradient(#fff 20px,transparent 1%) center,#c7c4c4;
+    background-size: 22px 22px;
+    border-top: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+    text-align: center;
+    margin-top: 3.5rem;
+    padding-bottom:2rem;
+    padding-top:2rem;
+
+}
+.subfooter__inner{
+  width:60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.subfooter__heading {
+    font-size: 22px!important;
+    font-size: 1.375rem;
+    margin: 0 auto 1em;
+}
+@media (min-width: 50em){
+.subfooter__heading {
+    font-size: 2.25rem!important;
+    line-height: 40px!important;
+}}
+.form_input{
+  padding: 1rem;
+  width: 50%;
+  outline: none;
+  
+}
+  </style>
+  </head>
+  <body>
+    <nav>
+      <input type="checkbox" id="check">
+      <label for="check" class="checkbtn">
+        <i class="fa fa-bars"></i>
+      </label>
+      <label>
+        <img src="https://webdev.imgix.net/images/lockup.svg" class="logo" height="70" width="150" alt="">
+      </label>
+      <ul>
+        <li><a class="navlink_active" href="/">Home</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <span id="front_image" >
+
+      </span>
+      <div class="content">
+    
+      
+    </div>
+      <div class="content_main">
+        <ul class="breadcrumb"style="margin-left:0.1rem;">
+          <li><a href="/" class="breadcrumb_item">Home</a></li>
+          <svg class="w-breadcrumbs__icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" aria-hidden="true">
+            <path d="M0 0h24v24H0V0z" fill="none"></path>
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"></path>
+          </svg>
+          <li><a href="/blog" class="breadcrumb_item">All Articles</a></li>
+         
+        </ul>
+          <h1 style="margin-left:-0.6rem;">Techniques to make a web app load fast even on a phone</h1>
+        <span style="color: #5f6368;">Nov. 5, 2020 • Update Nov. 6, 2020</span>
+       
+        <!-- Main content will come here -->
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">At Google I/O 2019 Mariko, Jake, and I shipped&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://proxx.app/">PROXX</a>, a modern Minesweeper-clone for the web. Something that sets PROXX apart is the focus on accessibility (you can play it with a screenreader!) and the ability to run as well on a feature phone as on a high-end desktop device. Feature phones are constrained in multiple ways:</p>
+<ul style="box-sizing: border-box; margin: 32px 0px; padding: 0px 0px 0px 48px; list-style: none; position: relative; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;">
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Weak CPUs</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Weak or non-existent GPUs</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Small screens without touch input</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Very limited amounts of memory</li>
+</ul>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">But they run a modern browser and are very affordable. For this reason, feature phones are making a resurgence in emerging markets. Their price point allows a whole new audience, who previously couldn't afford it, to come online and make use of the modern web.&nbsp;<span style="box-sizing: border-box;"><a style="box-sizing: border-box; color: #3740ff;" href="https://www.counterpointresearch.com/more-than-a-billion-feature-phones-to-be-sold-over-next-three-years/">For 2019 it is projected that around 400 million feature phones will be sold in India alone</a></span>, so users on feature phones might become a significant portion of your audience. In addition to that, connection speeds akin to 2G are the norm in emerging markets. How did we manage to make PROXX work well under feature phone conditions?</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot lozad" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/social_supercut_poster.jpg" preload="metadata" loop="loop" muted="" controls="controls" width="300" height="150" data-src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/social_supercut_x264.mp4"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">PROXX gameplay.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">Performance is important, and that includes both loading performance and runtime performance. It has been shown that&nbsp;<span style="box-sizing: border-box;">good performance correlates with increased user retention, improved conversions and&mdash;most importantly&mdash;increased inclusivity.</span>&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://twitter.com/malchata">Jeremy Wagner</a>&nbsp;has much more data and insight on&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://developers.google.com/web/fundamentals/performance/why-performance-matters/">why performance matters</a>.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">This is part 1 of a two-part series.&nbsp;<span style="box-sizing: border-box;">Part 1 focuses on loading performance</span>, and part 2 will focus on runtime performance.</p>
+<h2 id="capturing-the-status-quo" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Capturing the status quo&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#capturing-the-status-quo" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Testing your loading performance on a&nbsp;<em style="box-sizing: border-box;">real</em>&nbsp;device is critical. If you don't have a real device at hand, I recommend&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://webpagetest.org/">WebPageTest</a>&nbsp;(WPT), specifically the&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://webpagetest.org/easy">"simple" setup</a>.&nbsp;<span style="box-sizing: border-box;">WPT runs a battery of loading tests on a&nbsp;<em style="box-sizing: border-box;">real</em>&nbsp;device with an emulated 3G connection.</span></p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">3G is a good speed to measure. While you might be used to 4G, LTE or soon even 5G, the reality of mobile internet looks quite different. Maybe you're on a train, at a conference, at a concert, or on a flight. What you'll be experiencing there is most likely closer to 3G, and sometimes even worse.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">That being said, we're going to focus on 2G in this article because PROXX is explicitly targeting feature phones and emerging markets in its target audience. Once WebPageTest has run its test, you get a waterfall (similar to what you see in DevTools) as well as a filmstrip at the top. The film strip shows what your user sees while your app is loading. On 2G, the loading experience of the unoptimized version of PROXX is pretty bad:</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/stupid-proxx-load.mp4" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/stupid-proxx-load-poster.jpg" preload="metadata" muted="" controls="controls" width="300" height="150"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">The filmstrip video shows what the user sees when PROXX is loading on a real, low-end device over an emulated 2G connection.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">When loaded over 3G, the user sees 4 seconds of white nothingness.&nbsp;<span style="box-sizing: border-box;">Over 2G the user sees absolutely nothing for over 8 seconds.</span>&nbsp;If you read&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://developers.google.com/web/fundamentals/performance/why-performance-matters/">why performance matters</a>&nbsp;you know that we have now lost a good portion of our potential users due to impatience. The user needs to download all of the 62 KB of JavaScript for anything to appear on screen. The silver lining in this scenario is that the second anything appears on screen it is also interactive. Or is it?</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><picture style="box-sizing: border-box;"><source class="lozad" style="box-sizing: border-box;" type="image/webp" data-srcset="proxx-first-render.webp" /><img class="lozad" style="box-sizing: border-box; display: inline-block; height: auto; max-width: 100%; vertical-align: middle;" data-src="https://webdev.imgix.net/load-faster-like-proxx/proxx-first-render.jpg" /></picture>
+<figcaption class="w-figcaption" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 16px 0px 0px;">
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; margin-top: 36px; margin-bottom: 36px;">The&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/first-meaningful-paint">First Meaningful Paint</a>&nbsp;in the unoptimized version of PROXX is&nbsp;<em style="box-sizing: border-box;">technically</em>&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/interactive">interactive</a>&nbsp;but useless to the user.</p>
+</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">After about 62 KB of gzip'd JS has been downloaded and the DOM has been generated, the user gets to see our app. The app is&nbsp;<em style="box-sizing: border-box;">technically</em>&nbsp;interactive. Looking at the visual, however, shows a different reality. The web fonts are still loading in the background and until they are ready the user can see no text. While this state qualifies as a&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/first-meaningful-paint">First Meaningful Paint (FMP)</a>, it surely does not qualify as properly&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/interactive">interactive</a>, as the user can't tell what any of the inputs are about. It takes another second on 3G and 3 seconds on 2G until the app is ready to go.&nbsp;<span style="box-sizing: border-box;">All in all, the app takes 6 seconds on 3G and 11 seconds on 2G to become interactive.</span></p>
+<h2 id="waterfall-analysis" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Waterfall analysis&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#waterfall-analysis" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Now that we know&nbsp;<em style="box-sizing: border-box;">what</em>&nbsp;the user sees, we need to figure out the&nbsp;<em style="box-sizing: border-box;">why</em>. For this we can look at the waterfall and analyze why resources are loading too late. In our 2G trace for PROXX we can see two major red flags:</p>
+<ol style="box-sizing: border-box; margin: 32px 0px; padding: 0px 0px 0px 48px; counter-reset: ol-step-counter 0; list-style: none; position: relative; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;">
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; counter-increment: ol-step-counter 1; font-size: 1.125rem; line-height: 1.778rem;">There are multiple, multi-colored thin lines.</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; counter-increment: ol-step-counter 1; font-size: 1.125rem; line-height: 1.778rem;">JavaScript files form a chain. For example, the second resource only starts loading once the first resource is finished, and the third resource only starts when the second resource is finished.</li>
+</ol>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><picture style="box-sizing: border-box;"><img class="lozad" style="box-sizing: border-box; display: inline-block; height: auto; max-width: 100%; vertical-align: middle;" data-src="https://webdev.imgix.net/load-faster-like-proxx/waterfall_opt.png" /></picture>
+<figcaption class="w-figcaption" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 16px 0px 0px;">The waterfall gives insight into which resources are loading when and how long they take.</figcaption>
+</figure>
+<h3 id="reducing-connection-count" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 500; font-stretch: normal; font-size: 20px; line-height: 1.2; font-family: 'Google Sans', sans-serif; color: #202124; margin: 48px 0px 16px; overflow: visible;">Reducing connection count&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#reducing-connection-count" aria-hidden="true">#</a></h3>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Each thin line (<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">dns</code>,&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">connect</code>,&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">ssl</code>) stands for the creation of a new HTTP connection. Setting up a new connection is costly as it takes around 1s on 3G and roughly 2.5s on 2G. In our waterfall we see a new connection for:</p>
+<ul style="box-sizing: border-box; margin: 32px 0px; padding: 0px 0px 0px 48px; list-style: none; position: relative; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;">
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Request #1: Our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code></li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Request #5: The font styles from&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">fonts.googleapis.com</code></li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Request #8: Google Analytics</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Request #9: A font file from&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">fonts.gstatic.com</code></li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Request #14: The Web App Manifest</li>
+</ul>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">The new connection for&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;is unavoidable. The browser&nbsp;<em style="box-sizing: border-box;">has</em>&nbsp;to create a connection to our server to get the contents. The new connection for Google Analytics could be avoided by inlining something like&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://minimalanalytics.com/">Minimal Analytics</a>, but Google Analytics is not blocking our app from rendering or becoming interactive, so we don't really care about how fast it loads. Ideally, Google Analytics should be loaded in idle time, when everything else has already loaded. That way it won't take up bandwidth or processing power during the initial load. The new connection for the web app manifest is&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://fetch.spec.whatwg.org/#connections">prescribed by the fetch spec</a>, as the manifest has to be loaded over a non-credentialed connection. Again, the web app manifest doesn't block our app from rendering or becoming interactive, so we don't need to care that much.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">The two fonts and their styles, however, are a problem as they block rendering and also interactivity. If we look at the CSS that is delivered by&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">fonts.googleapis.com</code>, it's just two&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">@font-face</code>&nbsp;rules, one for each font. The font&nbsp;<em style="box-sizing: border-box;">styles</em>&nbsp;are so small in fact, that we decided to inline it into our HTML, removing one unnecessary connection. To avoid the cost of the connection setup for the font&nbsp;<em style="box-sizing: border-box;">files</em>, we can copy them to our own server.</p>
+<div class="w-aside w-aside--note" style="box-sizing: border-box; margin: 48px 0px 32px; padding: 24px 0px 0px 48px; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 18px; line-height: 32px; position: relative; color: #3740ff;">
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: inherit; line-height: inherit; font-family: inherit; margin: 0px; color: inherit;"><span style="box-sizing: border-box; font-weight: bold;">Note:</span>&nbsp;Copying CSS or font files to your own server is okay when using&nbsp;<a style="box-sizing: border-box;" href="https://fonts.google.com/">Google Fonts</a>. Other font providers might have different rules. Please check with your font provider's terms of service!</p>
+</div>
+<h3 id="parallelizing-loads" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 500; font-stretch: normal; font-size: 20px; line-height: 1.2; font-family: 'Google Sans', sans-serif; color: #202124; margin: 48px 0px 16px; overflow: visible;">Parallelizing loads&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#parallelizing-loads" aria-hidden="true">#</a></h3>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Looking at the waterfall, we can see that once the first JavaScript file is done loading, new files start loading immediately. This is typical for module dependencies. Our main module probably has static imports, so the JavaScript cannot run until those imports are loaded. The important thing to realize here is that these kinds of dependencies are known at build time. We can make use of&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">&lt;link rel="preload"&gt;</code>&nbsp;tags to make sure all dependencies start loading the second we receive our HTML.</p>
+<h3 id="results" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 500; font-stretch: normal; font-size: 20px; line-height: 1.2; font-family: 'Google Sans', sans-serif; color: #202124; margin: 48px 0px 16px; overflow: visible;">Results&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#results" aria-hidden="true">#</a></h3>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Let's take a look at what our changes have achieved. It's important to not change any other variables in our test setup that could skew the results, so we will be using&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://webpagetest.org/easy">WebPageTest's simple setup</a>&nbsp;for the rest of this article and look at the filmstrip:</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/preload-proxx-load.mp4" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/preload-proxx-load-poster.jpg" preload="metadata" muted="" controls="controls" width="300" height="150"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">We use WebPageTest's filmstrip to see what our changes have achieved.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;"><span style="box-sizing: border-box;">These changes reduced our TTI from 11 to 8.5</span>, which is roughly the 2.5s of connection setup time we aimed to remove. Well done us.</p>
+<h2 id="prerendering" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Prerendering&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#prerendering" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">While we just reduced our&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/interactive">TTI</a>, we haven't really affected the eternally long white screen the user has to endure for 8.5 seconds. Arguably&nbsp;<span style="box-sizing: border-box;">the biggest improvements for&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/first-meaningful-paint">FMP</a>&nbsp;can be achieved by sending styled markup in your&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code></span>. Common techniques to achieve this are prerendering and server-side rendering, which are closely related and are explained in&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://developers.google.com/web/updates/2019/02/rendering-on-the-web">Rendering on the Web</a>. Both techniques run the web app in Node and serialize the resulting DOM to HTML. Server-side rendering does this per request on the, well, server side, while prerendering does this at build time and stores the output as your new&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>. Since PROXX is a&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://jamstack.org/">JAMStack</a>&nbsp;app and has no server side, we decided to implement prerendering.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">There are many ways to implement a prerenderer. In PROXX we chose to use&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://pptr.dev/">Puppeteer</a>, which starts Chrome without any UI and allows you to remote control that instance with a Node API. We use this to inject our markup and our JavaScript and then read back the DOM as a string of HTML. Because we are using&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://github.com/css-modules/css-modules">CSS Modules</a>, we get CSS inlining of the styles that we need for free.</p>
+<pre class="language-js" style="box-sizing: border-box; margin-top: 32px; margin-bottom: 32px; padding: 16px; background-color: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; min-height: 64px;"><code>  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(rawIndexHTML);
+  await page.evaluate(codeToRun);
+  const renderedHTML = await page.content();
+  browser.close();
+  await writeFile("index.html", renderedHTML);</code></pre>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">With this in place, we can expect an improvement for our FMP. We still need to load and execute the same amount of JavaScript as before, so we shouldn't expect TTI to change much. If anything, our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;has gotten bigger and might push back our TTI a bit. There's only one way to find out: running WebPageTest.</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/ssr-proxx-load.mp4" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/ssr-proxx-load-poster.jpg" preload="metadata" muted="" controls="controls" width="300" height="150"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">The filmstrip shows a clear improvement for our FMP metric. TTI is mostly unaffected.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;"><span style="box-sizing: border-box;">Our First Meaningful Paint has moved from 8.5 seconds to 4.9 seconds,</span>&nbsp;a massive improvement. Our TTI still happens at around 8.5 seconds so it has been largely unaffected by this change. What we did here is a&nbsp;<em style="box-sizing: border-box;">perceptual</em>&nbsp;change. Some might even call it a sleight of hand. By rendering an intermediate visual of the game, we are changing the perceived loading performance for the better.</p>
+<h2 id="inlining" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Inlining&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#inlining" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Another metric that both DevTools and WebPageTest give us is&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/time-to-first-byte">Time To First Byte (TTFB)</a>. This is the time it takes from the first byte of the request being sent to the first byte of the response being received. This time is also often called a Round Trip Time (RTT), although technically there is a difference between these two numbers: RTT does not include the processing time of the request on the server side.&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://developers.google.com/web/tools/chrome-devtools/network/reference#timing-preview">DevTools</a>&nbsp;and WebPageTest visualize TTFB with a light color within the request/response block.</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><picture style="box-sizing: border-box;"><img class="lozad" style="box-sizing: border-box; display: inline-block; height: auto; max-width: 100%; vertical-align: middle;" data-src="https://webdev.imgix.net/load-faster-like-proxx/ttfb.svg" /></picture>
+<figcaption class="w-figcaption" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 16px 0px 0px;">The light section of a request signifies the request is waiting to receive the first byte of the response.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">Looking at our waterfall, we can see that the&nbsp;<span style="box-sizing: border-box;">all of requests spend the&nbsp;<em style="box-sizing: border-box;">majority</em>&nbsp;of their time waiting</span>&nbsp;for the first byte of the response to arrive.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">This problem was what HTTP/2 Push was originally conceived for. The app developer&nbsp;<em style="box-sizing: border-box;">knows</em>&nbsp;that certain resources are needed and can&nbsp;<em style="box-sizing: border-box;">push</em>&nbsp;them down the wire. By the time the client realizes that it needs to fetch additional resources, they are already in the browser's caches.&nbsp;<span style="box-sizing: border-box;">HTTP/2 Push turned out to be too hard to get right and is considered discouraged.</span>&nbsp;This problem space will be revisited during the standardization of HTTP/3. For now,&nbsp;<span style="box-sizing: border-box;">the easiest solution is to&nbsp;<em style="box-sizing: border-box;">inline</em>&nbsp;all the critical resources</span>&nbsp;at the expense of caching efficiency.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">Our critical CSS is already inlined thanks to CSS Modules and our Puppeteer-based prerenderer. For JavaScript we need to inline our critical modules&nbsp;<em style="box-sizing: border-box;">and their dependencies</em>. This task has varying difficulty, based on the bundler that you're using.</p>
+<div class="w-aside w-aside--note" style="box-sizing: border-box; margin: 48px 0px 32px; padding: 24px 0px 0px 48px; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 18px; line-height: 32px; position: relative; color: #3740ff;">
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: inherit; line-height: inherit; font-family: inherit; margin: 0px; color: inherit;"><span style="box-sizing: border-box; font-weight: bold;">Note:</span>&nbsp;In this step we also subset our font files to contain only the glyphs that we need for our landing page. I am not going to go into detail on this step as it is not easily abstracted and sometimes not even practical. We still load the full font files lazily, but they are not needed for the initial render.</p>
+</div>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/ssr-proxx-load.mp4" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/ssr-proxx-load-poster.jpg" preload="metadata" muted="" controls="controls" width="300" height="150"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">With the inlining of our JavaScript we have reduced our TTI from 8.5s to 7.2s.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">This shaved 1 second off our TTI. We have now reached the point where our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;contains everything that is needed for the initial render and becoming interactive. The HTML can render while it is still downloading, creating our FMP. The moment the HTML is done parsing and executing, the app is interactive.</p>
+<h2 id="aggressive-code-splitting" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Aggressive code splitting&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#aggressive-code-splitting" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Yes, our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;contains everything that is needed to become interactive. But on closer inspection it turns out it also contains everything else. Our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;is around 43 KB. Let's put that in relation to what the user can interact with at the start: We have a form to configure the game containing a couple of components, a start button and probably some code to persist and load user settings. That's pretty much it. 43 KB seems like a lot.</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><picture style="box-sizing: border-box;"><source class="lozad" style="box-sizing: border-box;" type="image/webp" data-srcset="proxx-loaded.webp" /><img class="lozad" style="box-sizing: border-box; display: inline-block; height: auto; max-width: 100%; vertical-align: middle;" data-src="https://webdev.imgix.net/load-faster-like-proxx/proxx-loaded.jpg" /></picture>
+<figcaption class="w-figcaption" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 16px 0px 0px;">The landing page of PROXX. Only critical components are used here.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">To understand where our bundle size is coming from we can use a&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://npm.im/source-map-explorer">source map explorer</a>&nbsp;or a similar tool to break down what the bundle consists of. As predicted, our bundle contains the game logic, the rendering engine, the win screen, the lose screen and a bunch of utilities. Only a small subset of these modules are needed for the landing page. Moving everything that is not strictly required for interactivity into a lazily-loaded module will decrease TTI&nbsp;<em style="box-sizing: border-box;">significantly</em>.</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><picture style="box-sizing: border-box;"><img class="lozad" style="box-sizing: border-box; display: inline-block; height: auto; max-width: 100%; vertical-align: middle;" data-src="https://webdev.imgix.net/load-faster-like-proxx/sourcemap.svg" /></picture>
+<figcaption class="w-figcaption" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 16px 0px 0px;">Analyzing the contents of PROXX's `index.html` shows a lot of unneeded resources. Critical resources are highlighted.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">What we need to do is&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/reduce-javascript-payloads-with-code-splitting/">code split</a>. Code splitting breaks apart your monolithic bundle into smaller parts that can be lazy-loaded on-demand. Popular bundlers like&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://webpack.js.org/">Webpack</a>,&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://rollupjs.org/">Rollup</a>, and&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://parceljs.org/">Parcel</a>&nbsp;support code splitting by using dynamic&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">import()</code>. The bundler will analyze your code and&nbsp;<em style="box-sizing: border-box;">inline</em>&nbsp;all modules that are imported&nbsp;<em style="box-sizing: border-box;">statically</em>. Everything that you import&nbsp;<em style="box-sizing: border-box;">dynamically</em>&nbsp;will be put into its own file and will only be fetched from the network once the&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">import()</code>&nbsp;call gets executed. Of course hitting the network has a cost and should only be done if you have the time to spare.&nbsp;<span style="box-sizing: border-box;">The mantra here is to statically import the modules that are&nbsp;<em style="box-sizing: border-box;">critically</em>&nbsp;needed at load time and dynamically load everything else.</span>&nbsp;But you shouldn't wait to the very last moment to lazy-load modules that are definitely going to be used.&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://twitter.com/philwalton">Phil Walton</a>'s&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://philipwalton.com/articles/idle-until-urgent/">Idle Until Urgent</a>&nbsp;is a great pattern for a healthy middle ground between lazy loading and eager loading.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">In PROXX we created a&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">lazy.js</code>&nbsp;file that statically imports everything that we&nbsp;<em style="box-sizing: border-box;">don't</em>&nbsp;need. In our main file, we can then&nbsp;<em style="box-sizing: border-box;">dynamically</em>&nbsp;import&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">lazy.js</code>. However, some of our&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://preactjs.com/">Preact</a>&nbsp;components ended up in&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">lazy.js</code>, which turned out to be a bit of a complication as Preact can't handle lazily-loaded components out of the box. For this reason we wrote a little&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">deferred</code>&nbsp;component wrapper that allows us to render a placeholder until the actual component has loaded.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">With this in place, we can use a Promise of a component in our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">render()</code>&nbsp;functions. For example, the&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">&lt;Nebula&gt;</code>&nbsp;component, which renders the animated background image, will be replaced by an empty&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">&lt;div&gt;</code>&nbsp;while the component is loading. Once the component is loaded and ready to use, the&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">&lt;div&gt;</code>&nbsp;will be replaced with the actual component.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">With all of this in place, we reduced our&nbsp;<code style="box-sizing: border-box; hyphens: none; margin: 0px 0.25em; padding: 0.125em 0.25em; background: #f7f7f7; border: 1px solid #dadce0; color: #202124; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 1rem; line-height: 1.5em; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; tab-size: 2; word-spacing: normal; white-space: pre-wrap;">index.html</code>&nbsp;to a mere 20 KB, less than half of the original size. What effect does this have on FMP and TTI? WebPageTest will tell!</p>
+<p>
+<script src="https://gist.github.com/Sachin-Duhan/5984c39f0ab50ab8b3dd875008cc6127.js"></script>
+</p>
+<figure class="w-figure" style="box-sizing: border-box; margin: 32px 0px; text-align: center; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;"><video class="w-screenshot" style="box-sizing: content-box; max-width: 100%; border: 1px solid #dadce0; padding: 4px; margin-left: -5px;" src="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/optimized-proxx-load.mp4" poster="https://storage.googleapis.com/web-dev-assets/js-heavy-sites/optimized-proxx-load-poster.jpg" preload="metadata" muted="" controls="controls" width="300" height="150"></video>
+<figcaption class="w-figcaption w-figcaption--fullbleed" style="box-sizing: border-box; font-size: 0.875em; line-height: 1.5em; margin: 24px 32px 0px;">The filmstrip confirms: Our TTI is now at 5.4s. A drastic improvement from our original 11s.</figcaption>
+</figure>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">Our FMP and TTI are only 100ms apart, as it is only a matter of parsing and executing the inlined JavaScript. After just 5.4s on 2G, the app is completely interactive. All the other, less essential modules are loaded in the background.</p>
+<h2 id="more-sleight-of-hand" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">More Sleight of Hand&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#more-sleight-of-hand" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">If you look at our list of critical modules above, you'll see that the rendering engine is not part of the critical modules. Of course, the game cannot start until we have our rendering engine to render the game. We could disable the "Start" button until our rendering engine is ready to start the game, but in our experience the user usually takes long enough to configure their game settings that this isn't necessary. Most of the time the rendering engine and the other remaining modules are done loading by the time the user presses "Start". In the rare case that the user is quicker than their network connection, we show a simple loading screen that waits for the remaining modules to finish.</p>
+<h2 id="conclusion" style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-weight: 400; font-stretch: normal; font-size: 24px; line-height: 1.33333; font-family: 'Google Sans', sans-serif; color: #202124; margin: 64px 0px 32px; overflow: visible;">Conclusion&nbsp;<a class="w-headline-link" style="box-sizing: border-box; display: inline; margin-left: 4px;" href="https://web.dev/load-faster-like-proxx/#conclusion" aria-hidden="true">#</a></h2>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 0px; margin-bottom: 36px;">Measuring is important. To avoid spending time on problems that are not real, we recommend to always measure first before implementing optimizations. Additionally, measurements should be done on&nbsp;<em style="box-sizing: border-box;">real</em>&nbsp;devices on a 3G connection or on&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://webpagetest.org/easy">WebPageTest</a>&nbsp;if no real device is at hand.</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">The filmstrip can give insight into how loading your app&nbsp;<em style="box-sizing: border-box;">feels</em>&nbsp;for the user. The waterfall can tell you what resources are responsible for potentially long loading times. Here's a checklist of things you can do to improve loading performance:</p>
+<ul style="box-sizing: border-box; margin: 32px 0px; padding: 0px 0px 0px 48px; list-style: none; position: relative; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 16px;">
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Deliver as many assets as possible over one connection.</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;"><a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/preload-critical-assets">Preload</a>&nbsp;or even inline resources that are required for the first render and interactivity.</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Prerender your app to improve perceived loading performance.</li>
+<li style="box-sizing: border-box; margin: 0px 0px 8px; padding: 0px; font-size: 1.125rem; line-height: 1.778rem;">Make use of aggressive&nbsp;<a style="box-sizing: border-box; color: #3740ff;" href="https://web.dev/reduce-javascript-payloads-with-code-splitting/">code splitting</a>&nbsp;to reduce the amount of code needed for interactivity.</li>
+</ul>
+<p>&nbsp;</p>
+<p style="box-sizing: border-box; font-variant-numeric: normal; font-variant-east-asian: normal; font-stretch: normal; font-size: 18px; line-height: 1.77778; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin-top: 36px; margin-bottom: 36px;">Stay tuned for part 2 where we discuss how to optimize runtime performance on hyper-constrained devices.</p>
+
+<span class="tags"><a href="/tag/performance">Performance</a></span>
+
+<span class="tags"><a href="/tag/load-time">load time</a></span>
+
+<span class="tags"><a href="/tag/speed">speed</a></span>
+
+
+
+<div class="container comment-section" id = "comment-section" style="margin-top: 5rem;">
+  <div class="pt-5">
+   
+
+   <div class="comment-form-wrap pt-5">
+     <div class="section-title">
+       <h3 style="margin-bottom: 2.5rem; "> Comments (<span style="color:rgb(19, 211, 137);">0</span>)</h3>
+     </div>
+     
+     
+       
+       
+     <form method="POST" class="p-5 comment_form" action = "/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone">
+       <input type="hidden" name="csrfmiddlewaretoken" value="n0wxhR6apNu7ezY4LLDh3PDZ2kWpdTSHVaaQd4nuHPq19SAa2IW4o8o8GUVzwsTN">
+       <div class="form-group">
+         <label for="message">Comment</label>
+         <textarea name="comm" id="message" cols="30" rows="3" class="form-control" style="border-radius:3px!important;border:2px solid rgb(106, 104, 104)!important;" placeholder="Drop your comments here" required></textarea>
+       </div>
+       <div class="form-group">
+        <button class="btn" type="submit" style="    background-color: #3740ff; color:white;margin-bottom: 5rem;">COMMENT</button>
+       </div>
+
+     </form>
+   </div>
+   
+
+
+   <ul class="comment-list" id="comment_list">
+ 
+  </ul>
+
+</div>
+     </div>
+    
+ 
+    <!-- END comme                 nt-list -->
+    <script type="text/javascript">
+      function ReplyForm(id) {
+        let elm = `<form method="POST" class="p-5 bg-light comment_form" action = "/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="n0wxhR6apNu7ezY4LLDh3PDZ2kWpdTSHVaaQd4nuHPq19SAa2IW4o8o8GUVzwsTN">
+        <div class="form-group">
+        <input type='text' value='${id}' name = 'comm_id' style="display:none;" readonly/>
+          <label for="message">Reply</label>
+          <textarea name="comm" id="message" cols="30" rows="3" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+          <input type="submit" value="Post Reply" class="btn btn-primary py-3">
+        </div>
+
+      </form>`;
+      document.getElementById(id).innerHTML = elm;
+      }
+    </script>
+</div>
+ 
+  </div>
+   
+</div> <!--This is ending content_main div-->
+<!-- 
+<section class="subfooter">
+	<div class="subfooter__inner inner">
+		<p class="subfooter__heading">Rank your site on Google search results in few months for <span style="color:#3740ff;">free </span>(See How!)
+    </p>
+		<div class="subfooter__form">
+      <form action="/blog/techniques-to-make-a-web-app-load-fast-even-on-a-phone" method="GET">
+        <input type="email"  name="email" class="form_input" placeholder="Email address*" style="font-family: Roboto, sans-serif;" required>
+        <span>
+          <button class="btn" style="border-radius:2.5rem;" type="submit">Subscribe now!</button>
+        </span>
+      </form>
+    </div>
+	</div>
+</section> -->
+</div>
 </body>
+<script type="text/javascript">
 
+window.onload = function() {
+  let image = document.getElementById('front_image');
+  image.innerHTML = `
+  <img src="/media/images/hero_mRQ8fUI.jpg" alt = "speed up site like a rocket" style="width:100%;max-height: 480px;">
+    `
+    let comments = document.getElementById('comment_list');
+    comments.innerHTML = `
+    
+  
+    `
+}
+const observer = lozad();
+observer.observe();
+</script>
 </html>
